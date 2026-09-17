@@ -67,10 +67,16 @@ class OverviewTests(unittest.TestCase):
         camera=Mock();camera.disposed=False;camera.stopping.is_set.return_value=False
         dialog=ManualInspectionDialog(ROOT,self.root/'runtime',{'driver':'uvc'},camera=camera)
         dialog.timer.stop();self.addCleanup(dialog.deleteLater)
-        self.assertFalse(dialog.overview_inspect_button.isEnabled())
+        self.assertTrue(dialog.overview_inspect_button.isEnabled())
+        dialog.capture_and_inspect_overview()
+        self.assertTrue(dialog.pending['inspect_all'])
+        camera.command.assert_called_once_with('profile', {'name':'overview'})
+        dialog.stop();camera.command.reset_mock()
         dialog.cycle=self.root/'cycle';dialog.cycle.mkdir();write_json(dialog.cycle/'bundle.json',self.bundle)
         dialog.capture=dict(role='overview',target=None);dialog.output=self.root/'out';dialog.accept_result()
         self.assertTrue(dialog.overview_inspect_button.isEnabled())
+        with patch.object(dialog,'inspect_overview') as chained:
+            dialog.capture['inspect_all']=True;dialog.accept_result();chained.assert_called_once()
         ids=[o['manual_id'] for o in dialog.objects]
         dialog.select_object('2');dialog.submit_request=Mock();dialog.inspect_overview()
         request=read_json(dialog.submit_request.call_args.args[0])

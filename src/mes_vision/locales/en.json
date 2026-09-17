@@ -1141,5 +1141,6 @@
   "불량 검출 상세": "Defect detection details",
   "③ 풀뷰로 전체 검사": "③ Inspect all from overview",
   "저장한 풀뷰의 모든 물체를 검사합니다 · 근접 상세검사와 비교 가능": "Inspect every object in the saved overview · compare with close-up inspection",
-  "선택 물체 · 풀뷰에서 자른 검사 영역": "Selected object · inspection crop from overview"
+  "선택 물체 · 풀뷰에서 자른 검사 영역": "Selected object · inspection crop from overview",
+  "현재 풀뷰 촬영부터 모든 물체 검사까지 한 번에 진행합니다": "Capture the current overview and inspect all objects in one step"
 }

@@ -64,9 +64,9 @@ class ManualInspectionDialog(QDialog):
         row.addWidget(self.settle)
         self.square = QCheckBox('중앙 1:1 크롭'); self.square.setChecked(True); row.addWidget(self.square)
         comparison_row=QHBoxLayout(); layout.addLayout(comparison_row)
-        self.overview_inspect_button=button('③ 풀뷰로 전체 검사',lambda:self.guard(self.inspect_overview))
+        self.overview_inspect_button=button('③ 풀뷰로 전체 검사',lambda:self.guard(self.capture_and_inspect_overview))
         comparison_row.addWidget(self.overview_inspect_button)
-        comparison_hint=QLabel('저장한 풀뷰의 모든 물체를 검사합니다 · 근접 상세검사와 비교 가능')
+        comparison_hint=QLabel('현재 풀뷰 촬영부터 모든 물체 검사까지 한 번에 진행합니다')
         comparison_hint.setWordWrap(True);comparison_row.addWidget(comparison_hint,1)
         settings_row = QHBoxLayout(); layout.addLayout(settings_row)
         self.bundle_button = button('모델 묶음 선택', lambda: self.guard(self.choose_bundle))
@@ -150,7 +150,7 @@ class ManualInspectionDialog(QDialog):
         self.connect_button.setEnabled(self.owns_camera and not live and not busy)
         self.full_button.setEnabled(live and not busy)
         self.detail_button.setEnabled(live and not busy and self.selected is not None)
-        self.overview_inspect_button.setEnabled(not busy and bool(self.objects) and self.overview_capture is not None)
+        self.overview_inspect_button.setEnabled(live and not busy)
         self.stop_button.setEnabled((busy or self.vlm_preload_wanted) and not self.closing)
         self.reset_button.setEnabled(not busy)
         self.table.setEnabled(not busy)
@@ -251,6 +251,11 @@ class ManualInspectionDialog(QDialog):
             image_kind='real', bundle=str(self.cycle/'bundle.json'), runtime=str(self.runtime), output=str(self.output)))
         self.submit_request(request)
 
+    def capture_and_inspect_overview(self):
+        require(not self.closing, '창을 닫는 중입니다.')
+        self.arrive('overview')
+        self.pending['inspect_all'] = True
+
     def inspect_overview(self):
         require(self.pending is None and self.process is None and not self.closing,'현재 검사가 끝난 뒤 실행하세요.')
         require(self.cycle is not None and self.overview_capture is not None and self.objects,'먼저 풀뷰 도착 · 촬영을 완료하세요.')
@@ -331,7 +336,7 @@ class ManualInspectionDialog(QDialog):
         elif state['state']=='COMPLETED' and not self.cancelled:
             self.process=None
             self.guard(self.accept_result)
-            if self.prepare_vlm_after_models:
+            if self.prepare_vlm_after_models and self.process is None:
                 self.prepare_vlm_after_models=False; self.vlm_guard(self.prepare_vlm_model)
             self.status.setText(self.status.text()+f" · 검사 처리 {state['elapsed_ms']/1000:.2f}초 (모델 로드 제외)")
             self.update_controls()
@@ -357,6 +362,9 @@ class ManualInspectionDialog(QDialog):
         self.refresh_objects()
         if self.objects: self.select_object(self.capture['target'] or self.objects[0]['manual_id'])
         self.status.setText('검사 완료 · 다음 물체로 카메라를 옮겨주세요. 저장 위치: '+str(self.cycle) if self.objects else '물체 미검출 · 풀뷰 위치/조명/모델을 확인하고 다시 촬영하세요.')
+        if self.capture['role']=='overview' and self.capture.get('inspect_all') and self.objects:
+            self.inspect_overview()
+            return
         if self.capture['role']=='detail':
             try: self.request_vlm(self.capture['target'])
             except Exception as exc: self.vlm_text.setPlainText('VLM 확인 불가: '+str(exc))
