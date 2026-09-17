@@ -83,7 +83,7 @@ def run_photos(request, root, *, registry=None, resident=None):
     require(not output.exists(),'Choose a new result directory')
     jobs=request['images']; require(isinstance(jobs,list) and 1<=len(jobs)<=200,'Select 1 to 200 photographs')
     require(request['image_kind'] in ('real','synthetic'),'Image origin required')
-    require(all(j['role'] in ('overview','detail') for j in jobs),'Unknown capture domain')
+    require(all(j['role'] in ('overview','detail','overview_inspection') for j in jobs),'Unknown capture domain')
     require(len({str(Path(j['path']).resolve()) for j in jobs})==len(jobs),'Duplicate photograph')
     if resident is None: bundle=load_bundle(request['bundle'],root)
     else:
@@ -103,7 +103,9 @@ def run_photos(request, root, *, registry=None, resident=None):
             if resident is None or resident.allow_background: stack.enter_context(coordinator.foreground(timeout=60))
             handles={} if resident is None else resident.handles
             needed=set()
-            for job in jobs: needed.update(('overview',) if job['role']=='overview' else ('objects','defects'))
+            for job in jobs:
+                needed.update(('overview',) if job['role']=='overview' else
+                              ('defects',) if job['role']=='overview_inspection' else ('objects','defects'))
             for role in ('overview','objects','defects'):
                 if resident is not None: continue
                 if role not in needed: continue
@@ -116,8 +118,13 @@ def run_photos(request, root, *, registry=None, resident=None):
                 with ImageSource(path) as source:
                     event=source.read(); require(event.frame is not None,event.message); frame=event.frame
                 require(not frame.is_live and sha256(path)==job['sha256'],'Photograph changed during reading')
-                detector=handles['overview' if job['role']=='overview' else 'objects'].adapter
-                batch=checked_batch(detector,frame,100)
+                source_objects=None; mapping=None
+                if job['role']=='overview_inspection':
+                    from .overview_inspection import frozen_overview
+                    batch,source_objects=frozen_overview(job,frame,bundle,request['image_kind'])
+                else:
+                    detector=handles['overview' if job['role']=='overview' else 'objects'].adapter
+                    batch=checked_batch(detector,frame,100)
                 dedup_audit=None
                 if job['role']=='detail':
                     from .detail_dedup import deduplicate_detail
@@ -127,17 +134,22 @@ def run_photos(request, root, *, registry=None, resident=None):
                     d=batch.detections[0]; b=d.box
                     associated=(d.label==bundle['product_id'] and abs((b.x1+b.x2)/2/frame.width-.5)<=.25
                                 and abs((b.y1+b.y2)/2/frame.height-.5)<=.25)
-                inspectors=(handles['defects'].adapter,) if associated else ()
+                inspectors=(handles['defects'].adapter,) if associated or source_objects is not None else ()
                 pipeline=InspectionPipeline(_Detection(batch),inspectors,mode=Mode.MODEL_FILE,
                     product_id=bundle['product_id'],expected_count=1 if job['role']=='detail' else None,
                     inspection_batch_size=1)
                 raw=pipeline.run(frame)
+                if source_objects is not None:
+                    from .overview_inspection import object_mapping
+                    mapping=object_mapping(source_objects,raw.objects)
                 from mes_vision.inspection.finding_scores import RULE
                 raw.config['finding_presentation']=dict(RULE)
                 if dedup_audit is not None: raw.config['detail_deduplication']=dedup_audit
                 raw.config['saved_photo']={'role':job['role'],'source_sha256':job['sha256'],
                     'image_kind':request['image_kind'],'model_bundle_digest':fingerprint(bundle),
                     'detail_association_confirmed':associated,'production_ready':False}
+                if mapping is not None:
+                    raw.config['saved_photo'].update(overview_origin=deepcopy(job['overview_origin']),object_mapping=mapping)
                 # Keep existing incomplete-criteria policy semantics; no synthetic OK or NG approval.
                 result=apply_policy(raw,policy)
                 snapshot=output/f'photo-{index:04d}'
@@ -148,6 +160,7 @@ def run_photos(request, root, *, registry=None, resident=None):
                     'role':job['role'],'snapshot':snapshot.name,'snapshot_digest':fingerprint(manifest),
                     'association_confirmed':associated,'objects':len(result.objects),
                     'elapsed_ms':(time.perf_counter()-started)*1000}
+                if mapping is not None:record.update(overview_origin=deepcopy(job['overview_origin']),object_mapping=mapping)
                 records.append(record)
                 atomic_json(output/'status.json',{'state':'INSPECTING','completed':len(records),'total':len(jobs)})
         report={'schema_version':1,'bundle_digest':fingerprint(bundle),'model_bundle':'bundle.json',
@@ -172,6 +185,13 @@ def open_results(path):
         require(snapshot.parent==root,'Snapshot escaped the result directory')
         manifest,result,_=load_snapshot(snapshot,expected_digest=record['snapshot_digest'])
         meta=result['config']['saved_photo']
+        if record['role']=='overview_inspection':
+            require(meta.get('overview_origin')==record.get('overview_origin') and
+                    meta.get('object_mapping')==record.get('object_mapping') and
+                    len(record['object_mapping'])==len(result['objects']) and
+                    len({p['source_object_id'] for p in record['object_mapping']})==len(result['objects']) and
+                    {p['object_id'] for p in record['object_mapping']}=={o['object_id'] for o in result['objects']},
+                    'Full-view object result binding changed')
         require(meta['role']==record['role'] and meta['source_sha256']==record['source_sha256']
                 and meta['model_bundle_digest']==report['bundle_digest']
                 and meta['image_kind']==report['image_kind']==manifest['kind']

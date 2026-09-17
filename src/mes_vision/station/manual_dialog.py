@@ -27,6 +27,7 @@ class ManualInspectionDialog(QDialog):
         self.process = self.pending = self.selected = self.cycle = None
         self.server=None; self.server_bundle=None; self.request_id=None
         self.objects, self.details = [], {}
+        self.overview_capture = None
         self.closing = self.cancelled = False
         self.close_ready = False
         self.vlm_worker = None
@@ -62,6 +63,11 @@ class ManualInspectionDialog(QDialog):
         self.settle = QDoubleSpinBox(); self.settle.setRange(.5, 5); self.settle.setValue(1.5); self.settle.setSuffix('초 고정 대기')
         row.addWidget(self.settle)
         self.square = QCheckBox('중앙 1:1 크롭'); self.square.setChecked(True); row.addWidget(self.square)
+        comparison_row=QHBoxLayout(); layout.addLayout(comparison_row)
+        self.overview_inspect_button=button('③ 풀뷰로 전체 검사',lambda:self.guard(self.inspect_overview))
+        comparison_row.addWidget(self.overview_inspect_button)
+        comparison_hint=QLabel('저장한 풀뷰의 모든 물체를 검사합니다 · 근접 상세검사와 비교 가능')
+        comparison_hint.setWordWrap(True);comparison_row.addWidget(comparison_hint,1)
         settings_row = QHBoxLayout(); layout.addLayout(settings_row)
         self.bundle_button = button('모델 묶음 선택', lambda: self.guard(self.choose_bundle))
         self.defect_button = button('불량 모델 교체(.pth)', lambda: self.guard(self.choose_defects))
@@ -83,7 +89,7 @@ class ManualInspectionDialog(QDialog):
         right = QSplitter(Qt.Vertical); panes.addWidget(right)
         self.preview = ImagePanel(square=False); self.preview.setMinimumHeight(240); self.preview.canvas.placeholder = '왜곡보정 실시간 영상'; right.addWidget(self.preview)
         detail_box = QWidget(); dl = QVBoxLayout(detail_box); right.addWidget(detail_box)
-        dl.addWidget(QLabel('선택 물체의 저장된 상세사진'))
+        self.detail_title=QLabel('선택 물체의 저장된 상세사진');dl.addWidget(self.detail_title)
         self.detail = ImagePanel(square=False); self.detail.setMinimumHeight(260); dl.addWidget(self.detail, 1)
         self.detail.canvas.placeholder = '물체 번호를 선택하고 상세사진을 촬영하세요.'
         self.reasons = QTextEdit(); self.reasons.setReadOnly(True); self.reasons.setMaximumHeight(85); dl.addWidget(self.reasons)
@@ -144,6 +150,7 @@ class ManualInspectionDialog(QDialog):
         self.connect_button.setEnabled(self.owns_camera and not live and not busy)
         self.full_button.setEnabled(live and not busy)
         self.detail_button.setEnabled(live and not busy and self.selected is not None)
+        self.overview_inspect_button.setEnabled(not busy and bool(self.objects) and self.overview_capture is not None)
         self.stop_button.setEnabled((busy or self.vlm_preload_wanted) and not self.closing)
         self.reset_button.setEnabled(not busy)
         self.table.setEnabled(not busy)
@@ -174,6 +181,7 @@ class ManualInspectionDialog(QDialog):
         if self.pending is not None or self.process is not None: return
         self.vlm_guard(self.cancel_vlm_jobs)
         self.objects, self.details, self.selected, self.cycle = [], {}, None, None
+        self.overview_capture=None
         self.table.setRowCount(0); self.reasons.clear()
         for panel in (self.overview, self.detail):
             panel.canvas.pixmap=QPixmap(); panel.canvas.tracks=[]; panel.canvas.selected_id=None; panel.canvas.update()
@@ -227,6 +235,7 @@ class ManualInspectionDialog(QDialog):
             self.cycle.mkdir(parents=True)
             write_json(self.cycle/'bundle.json', self.bundle)
             self.objects, self.details, self.selected = [], {}, None
+            self.overview_capture=None
             self.table.setRowCount(0); self.overview.canvas.tracks=[]
             self.detail.canvas.pixmap=QPixmap(); self.detail.canvas.tracks=[]; self.detail.canvas.update(); self.reasons.clear()
         folder = self.cycle/('capture-'+uuid4().hex)
@@ -240,6 +249,25 @@ class ManualInspectionDialog(QDialog):
         request = folder/'request.json'
         write_json(request, dict(images=[dict(path=str(image), sha256=sha256(image), role=capture['role'])],
             image_kind='real', bundle=str(self.cycle/'bundle.json'), runtime=str(self.runtime), output=str(self.output)))
+        self.submit_request(request)
+
+    def inspect_overview(self):
+        require(self.pending is None and self.process is None and not self.closing,'현재 검사가 끝난 뒤 실행하세요.')
+        require(self.cycle is not None and self.overview_capture is not None and self.objects,'먼저 풀뷰 도착 · 촬영을 완료하세요.')
+        origin=deepcopy(self.overview_capture)
+        manifest,source,_=load_snapshot(origin['snapshot'],expected_digest=origin['snapshot_digest'])
+        require({o['object_id'] for o in source['objects']}=={o['object_id'] for o in self.objects},'풀뷰 물체 목록이 변경됐습니다. 다시 촬영하세요.')
+        folder=self.cycle/('overview-inspection-'+uuid4().hex);folder.mkdir()
+        image=Path(origin['snapshot'])/'frame.png'
+        self.capture=dict(role='overview_inspection',target=self.selected,overview_origin=origin)
+        self.output=folder/'result';self.cancelled=False
+        request=folder/'request.json'
+        write_json(request,dict(images=[dict(path=str(image),sha256=sha256(image),role='overview_inspection',overview_origin=origin)],
+            image_kind=manifest['kind'],bundle=str(self.cycle/'bundle.json'),runtime=str(self.runtime),output=str(self.output)))
+        self.submit_request(request)
+        self.status.setText(f'저장된 풀뷰로 {len(self.objects)}개 물체 검사 중 · 카메라 이동·재촬영 없음')
+
+    def submit_request(self,request):
         if self.server is not None and self.server_bundle != self.bundle:
             # Reconfiguration is uncommon; reap the old worker before acquiring its GPU lock again.
             self.server.kill()
@@ -312,7 +340,11 @@ class ManualInspectionDialog(QDialog):
         directory, report = open_results(self.output/'results.json')
         record = report['records'][0]; snapshot = directory/record['snapshot']
         _, result, _ = load_snapshot(snapshot, expected_digest=record['snapshot_digest'])
+        if self.capture['role']=='overview_inspection':
+            self.accept_overview_inspection(snapshot,record,result)
+            return
         if self.capture['role']=='overview':
+            self.overview_capture=dict(snapshot=str(snapshot),snapshot_digest=record['snapshot_digest'])
             from .display_order import reading_order
             self.objects = reading_order(result['objects'])
             for i, obj in enumerate(self.objects): obj['manual_id'] = str(i+1)
@@ -320,15 +352,38 @@ class ManualInspectionDialog(QDialog):
         else:
             old = self.details.get(self.capture['target'], {})
             if old.get('vlm_job'): self.vlm_guard(lambda: self.vlm_queue.cancel(old['vlm_job']))
-            self.details[self.capture['target']] = dict(snapshot=str(snapshot), snapshot_digest=record['snapshot_digest'], result=result, associated=record['association_confirmed'])
-        write_json(self.cycle/'session.json', dict(objects=self.objects, details=self.details,
-            coordinate_space='rectified_crop_pixels', robot_commands_enabled=False, production_ready=False))
+            self.details[self.capture['target']] = dict(snapshot=str(snapshot), snapshot_digest=record['snapshot_digest'], result=result, associated=record['association_confirmed'],capture_method='detail')
+        self.save_session()
         self.refresh_objects()
         if self.objects: self.select_object(self.capture['target'] or self.objects[0]['manual_id'])
         self.status.setText('검사 완료 · 다음 물체로 카메라를 옮겨주세요. 저장 위치: '+str(self.cycle) if self.objects else '물체 미검출 · 풀뷰 위치/조명/모델을 확인하고 다시 촬영하세요.')
         if self.capture['role']=='detail':
             try: self.request_vlm(self.capture['target'])
             except Exception as exc: self.vlm_text.setPlainText('VLM 확인 불가: '+str(exc))
+
+    def accept_overview_inspection(self,snapshot,record,result):
+        require(record['role']=='overview_inspection' and record['overview_origin']==self.overview_capture
+                and self.capture['overview_origin']==self.overview_capture,'풀뷰 회차가 변경됐습니다.')
+        mapping={p['source_object_id']:p['object_id'] for p in record['object_mapping']}
+        require(set(mapping)=={o['object_id'] for o in self.objects},'풀뷰 검사 결과의 물체 목록이 다릅니다.')
+        manifest,_,_=load_snapshot(snapshot,expected_digest=record['snapshot_digest'])
+        records={o['object_id']:o for o in result['objects']}
+        files={o['object_id']:o['file'] for o in manifest['objects']}
+        replacements={}
+        for source in self.objects:
+            target=mapping[source['object_id']]
+            require(target in records and target in files,'물체별 풀뷰 검사 결과가 없습니다.')
+            view=deepcopy(result);view['objects']=[deepcopy(records[target])]
+            replacements[source['manual_id']]=dict(snapshot=str(snapshot),snapshot_digest=record['snapshot_digest'],
+                result=view,associated=True,capture_method='overview_inspection',snapshot_object_id=target,
+                display_file=files[target],overview_origin=deepcopy(self.overview_capture))
+        for identity,detail in replacements.items():
+            previous=self.details.get(identity,{})
+            if previous.get('vlm_job'):self.vlm_guard(lambda job=previous['vlm_job']:self.vlm_queue.cancel(job))
+        self.details.update(replacements);self.save_session();self.refresh_objects()
+        if self.objects:self.select_object(self.capture['target'] or self.objects[0]['manual_id'])
+        self.status.setText(f'풀뷰 전체 검사 완료 · {len(replacements)}개 · 근접 상세검사로 다시 확인해 비교할 수 있습니다.')
+        for identity in replacements:self.vlm_guard(lambda key=identity:self.request_vlm(key))
 
     def refresh_objects(self):
         self.table.blockSignals(True); self.table.setRowCount(len(self.objects)); tracks=[]
@@ -337,6 +392,7 @@ class ManualInspectionDialog(QDialog):
             text = '미촬영' if detail is None else ('결과 있음 · 보류' if detail['associated'] else '재촬영 필요')
             if detail and detail['associated']:
                 text = finding_summary(detail['result']['objects']) or '표시할 불량 없음 · 보류'
+                text=('풀뷰 · ' if detail.get('capture_method')=='overview_inspection' else '상세 · ')+text
             for j, value in enumerate((identity, f"{(b['x1']+b['x2'])/2:.1f} / {(b['y1']+b['y2'])/2:.1f}", text)):
                 self.table.setItem(i,j,QTableWidgetItem(value))
             overlay=object_overlays(obj,identity=identity)[0]; overlay.update(label=identity+' · '+text, status='REVIEW' if detail else 'INSPECTING'); tracks.append(overlay)
@@ -354,11 +410,13 @@ class ManualInspectionDialog(QDialog):
         self.detail_button.setText('② 물체 '+identity+'번 도착 · 상세검사')
         d=self.details.get(identity); self.detail.canvas.tracks=[]
         if d:
-            self.detail.canvas.set_file(Path(d['snapshot'])/'frame.png')
-            lines=['물체 '+identity+'번 · 사용자가 연결한 상세사진', '최종 판정: 보류 (판정 기준 미검증)']
+            is_overview=d.get('capture_method')=='overview_inspection'
+            self.detail_title.setText('선택 물체 · 풀뷰에서 자른 검사 영역' if is_overview else '선택 물체의 저장된 상세사진')
+            self.detail.canvas.set_file(Path(d['snapshot'])/(d['display_file'] if is_overview else 'frame.png'))
+            lines=['물체 '+identity+'번 · '+('풀뷰 검사 · 실제 근접 촬영 아님' if is_overview else '사용자가 연결한 상세사진'), '최종 판정: 보류 (판정 기준 미검증)']
             if not d['associated']: lines.append('중앙에 물체 하나가 검출되지 않았습니다. 다시 촬영하세요.')
             for obj in d['result']['objects']:
-                self.detail.canvas.tracks.extend(object_overlays(obj))
+                self.detail.canvas.tracks.extend(object_overlays(obj,crop=is_overview))
                 lines.extend('검사 오류: '+c['check_id'] for c in obj['checks'] if c['status']=='ERROR')
             self.reasons.setHtml(finding_details_html(lines,d['result']['objects']))
         else:
@@ -387,7 +445,14 @@ class ManualInspectionDialog(QDialog):
         if not detail or not detail['associated'] or len(detail['result']['objects']) != 1: return
         # Bind to the immutable snapshot, not the current row or camera image.
         _, result, digest = load_snapshot(detail['snapshot'], expected_digest=detail['snapshot_digest'])
-        obj = result['objects'][0]
+        target=detail.get('snapshot_object_id')
+        if target is None:
+            require(len(result['objects'])==1,'상세사진에 여러 물체가 연결됐습니다.')
+            obj=result['objects'][0]
+        else:
+            matches=[o for o in result['objects'] if o['object_id']==target]
+            require(len(matches)==1,'풀뷰 VLM 대상 물체가 없습니다.')
+            obj=matches[0]
         from mes_vision.vlm.region_backend import region_plan
         plan=region_plan(dict(snapshot_path=detail['snapshot'],snapshot_digest=detail['snapshot_digest'],object_id=obj['object_id']),self.vlm_capabilities())
         if not plan['regions']:
@@ -447,7 +512,7 @@ class ManualInspectionDialog(QDialog):
 
     def save_session(self):
         if self.cycle is not None:
-            write_json(self.cycle/'session.json', dict(objects=self.objects, details=self.details,
+            write_json(self.cycle/'session.json', dict(objects=self.objects, details=self.details,overview_capture=self.overview_capture,
                 coordinate_space='rectified_crop_pixels', robot_commands_enabled=False, production_ready=False))
 
     def refresh_vlm(self):

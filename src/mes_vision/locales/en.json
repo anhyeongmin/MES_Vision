@@ -1138,5 +1138,8 @@
   "표시할 불량 없음 · 정상 확정은 아닙니다.": "No defects meet the display threshold · not a confirmed OK result.",
   "표시 기준 미만 {count}건 · 원본 기록 보존": "{count} findings below display threshold · original evidence retained",
   "검출 ≥ 0.5 · 의심 0.2~0.5 미만 · 최종 판정과 별도": "Detected ≥ 0.5 · suspected ≥ 0.2 and < 0.5 · separate from final verdict",
-  "불량 검출 상세": "Defect detection details"
+  "불량 검출 상세": "Defect detection details",
+  "③ 풀뷰로 전체 검사": "③ Inspect all from overview",
+  "저장한 풀뷰의 모든 물체를 검사합니다 · 근접 상세검사와 비교 가능": "Inspect every object in the saved overview · compare with close-up inspection",
+  "선택 물체 · 풀뷰에서 자른 검사 영역": "Selected object · inspection crop from overview"
 }
