@@ -41,11 +41,15 @@ def main():
     owner = FileLock(str(args.runtime / "desktop.lock"), timeout=0)
     try: owner.acquire()
     except Timeout:
+        from mes_vision.operation.single_instance import focus_existing
+        if focus_existing(args.runtime): return 0
         QMessageBox.information(None, "MES Vision", tr("같은 저장 폴더의 검사 프로그램이 이미 실행 중입니다."))
         return 2
     try:
         from mes_vision.station.window import StationWindow as DesktopWindow
         window = DesktopWindow(ROOT, args.runtime); window.show()
+        from mes_vision.operation.single_instance import DesktopActivation
+        window.desktop_activation=DesktopActivation(args.runtime,window)
         if args.settings:
             from PySide6.QtCore import QTimer
             QTimer.singleShot(0,window.open_preferences)

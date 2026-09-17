@@ -31,13 +31,15 @@ def authorize_move(journal,request,calibration,equipment):
 
 class StationRobotPort(QThread):
     completed=Signal(object); failed=Signal(str); changed=Signal(object)
-    def __init__(self,runtime,equipment,*,adapter_factory=Magician):
+    def __init__(self,runtime,equipment,*,adapter_factory=Magician,teaching_context=None):
         super().__init__(); self.runtime=Path(runtime); self.equipment=deepcopy(equipment); self.factory=adapter_factory
         self.commands=queue.Queue(1); self.stopping=threading.Event(); self.stop_requested=threading.Event()
         self.lock=threading.Lock(); self.generation=0; self.state='DISCONNECTED'
+        self.teaching_context=deepcopy(teaching_context)
 
     def request(self,kind,**payload):
-        require(kind in {'recover','move','sort'},'Unsupported station robot request')
+        allowed={'teach_save','teach_delete','teach_move','teach_offset','teach_axes'} if self.teaching_context is not None else {'recover','move','sort'}
+        require(kind in allowed,'Unsupported station robot request')
         with self.lock:
             require(not self.stopping.is_set() and not self.stop_requested.is_set(),'Robot is stopping')
             self.commands.put_nowait({'kind':kind,'generation':self.generation,**deepcopy(payload)})
@@ -54,6 +56,10 @@ class StationRobotPort(QThread):
             return message['generation']==self.generation and not self.stop_requested.is_set() and not self.stopping.is_set()
 
     def run(self):
+        if self.teaching_context is not None:
+            from .teaching import run_teaching
+            run_teaching(self)
+            return
         adapter=None; controller=None; motion=None; ready_digest=None; last_status=0; preparation=None
         try:
             # Acquire shared controller ownership before opening serial. Creating a

@@ -9,7 +9,7 @@ import time
 import math
 from uuid import uuid4
 from mes_vision.training.data import require
-from .contracts import Pose,RobotStatus,Completion
+from .contracts import Pose,JointPose,RobotStatus,Completion
 
 
 def packet(command,write=False,queued=False,parameters=b""):
@@ -58,6 +58,7 @@ class Magician:
         self.epoch=uuid4().hex; self.connected=True; self.motion_state="STOPPED"; self.pending=None
         self.pose_tolerance=settings["pose_tolerance_mm"]; self.rotation_tolerance=settings["rotation_tolerance_deg"]
         self.tool=None; self.stop_confirmed=False; self.actual_pose=None
+        self.actual_joints=None; self.teaching_joint_ready=False
         try:
             self.request_stop()
             require(self.stop_confirmed,"로봇 정지를 확인할 수 없습니다.")
@@ -76,7 +77,7 @@ class Magician:
         require(len(data)==32,"Magician 위치 응답 형식이 다릅니다.")
         values=struct.unpack("<8f",data)
         require(all(math.isfinite(v) for v in values),"로봇 위치 값이 유효하지 않습니다.")
-        self.actual_pose=Pose(*values[:4]); return self.actual_pose
+        self.actual_pose=Pose(*values[:4]); self.actual_joints=JointPose(*values[4:]); return self.actual_pose
     def holding(self):
         address=self.settings["input_address"]
         if address is None: return None
@@ -92,6 +93,7 @@ class Magician:
         except Exception:
             self.motion_state="UNKNOWN"; raise
     def configure(self,profile):
+        self.teaching_joint_ready=False
         require(profile.kind=="real" and profile.validated,"검증된 실물 로봇 설정이 필요합니다.")
         require(profile.verification_method=="digital_input", "독립 집기 확인 센서 설정이 필요합니다.")
         require(self.settings["input_address"] is not None,"집기 확인 센서 입력을 등록하세요.")
@@ -106,12 +108,32 @@ class Magician:
         require(self.stop_confirmed and self.holding() is False,"정지·빈 집기 상태를 먼저 확인하세요.")
         self.protocol.request(245,True)
         self.epoch=uuid4().hex; self.motion_state="READY"; self.pending=None
+    def prepare_teaching_move(self,speed,*,joint=False):
+        """Explicit empty-tool commissioning only; never used by production recovery."""
+        require(type(speed) in {int,float} and math.isfinite(speed) and 0<speed<=10,
+                '티칭 이동 속도는 0 초과 10 mm/s 이하로 입력하세요.')
+        require(self.pending is None and self.stop_confirmed,'먼저 정지 상태를 확인하세요.')
+        # Set absolute Cartesian limits as well as ratio: do not inherit Studio settings.
+        params=(80,(speed,)*4+(20.,)*4) if joint else (81,(speed,speed,20.,20.))
+        self.teaching_joint_ready=False
+        for code,values in (params,(83,(100.,100.))):
+            self.protocol.request(code,True,parameters=struct.pack('<'+'f'*len(values),*values))
+            data=self.protocol.request(code)
+            require(len(data)==4*len(values) and all(abs(a-b)<.01 for a,b in zip(struct.unpack('<'+'f'*len(values),data),values)),
+                    '티칭 속도 설정 읽기 확인 실패')
+        self.protocol.request(245,True)
+        self.teaching_joint_ready=joint
+        self.tool='gripper'; self.motion_state='READY'
     def submit(self,command):
         require(self.motion_state=="READY" and self.pending is None and self.tool in {"suction","gripper"},"로봇 운전 준비 상태가 아닙니다.")
         self.stop_confirmed=False
         if command.action=="move":
             p=command.target; payload=struct.pack("<B4f",2,p.x,p.y,p.z,p.r)
             response=self.protocol.request(84,True,True,payload)
+        elif command.action=='move_joints':
+            require(self.teaching_joint_ready and isinstance(command.target,JointPose),'조인트 티칭 준비가 필요합니다.')
+            p=command.target
+            response=self.protocol.request(84,True,True,struct.pack('<B4f',4,p.j1,p.j2,p.j3,p.j4))
         elif command.action in {"engage","release"}:
             response=self.protocol.request(62 if self.tool=="suction" else 63,True,True,bytes((1,int(command.action=="engage"))))
         elif command.action in {"verify_pick","verify_place"}:
@@ -135,6 +157,11 @@ class Magician:
             close=all(abs(getattr(actual,k)-getattr(target,k))<=self.pose_tolerance for k in ("x","y","z")) and abs(actual.r-target.r)<=self.rotation_tolerance
             if not close: return Completion(command_id,"PENDING",actual,detail="목표 위치 도달 확인 중")
             response=Completion(command_id,"DONE",target,detail=f"measured={actual}; tolerance_mm={self.pose_tolerance}")
+        elif command.action=='move_joints':
+            self.read_pose(); target=command.target
+            if not all(abs(getattr(self.actual_joints,k)-getattr(target,k))<=self.rotation_tolerance for k in ('j1','j2','j3','j4')):
+                return Completion(command_id,'PENDING',detail='실측 조인트 도착 확인 중')
+            response=Completion(command_id,'DONE',detail=f'measured_joints={self.actual_joints}')
         elif command.action.startswith("verify_"):
             verified=self.holding() is (command.action=="verify_pick")
             if not verified: return Completion(command_id,"PENDING",verified=False)

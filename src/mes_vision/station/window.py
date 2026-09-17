@@ -60,6 +60,8 @@ splitters to preferred heights and pushes reasons below a laptop viewport.
 
 
 class StationWindow(DesktopWindow):
+    PAGES=DesktopWindow.PAGES+[('로봇 제어 · 티칭','조인트·XYZR 수동 제어와 위치 티칭을 진행합니다.')]
+
     def __init__(self,root,runtime,*,start_worker=True):
         self.scan=None; self.capture_port=None; self.display_data=None; self.rendered=None; self.overview_key=None; self.detail_key=None
         self.model_info=None; self.recipe=None; self.preview=None; self.ui_probe_at=0.; self.history_due=0.; self.observed_revision=None
@@ -72,6 +74,12 @@ class StationWindow(DesktopWindow):
         from mes_vision.operation.acquisition import configure_equipment
         self.equipment=configure_equipment(self.root,self.equipment)
         self.refresh_equipment()
+        from .teaching_dialog import TeachingDialog
+        self.robot_panel=TeachingDialog(self.runtime,self.equipment,self,embedded=True)
+        self.pages.addWidget(self.robot_panel)
+        self.nav.addItem('6  로봇 제어 · 티칭'); self.compact_nav.addItem('6  로봇 제어 · 티칭')
+        self.sidebar.add_group('로봇',[('로봇 제어 · 티칭','F6')])
+        self.nav.currentRowChanged.connect(self.robot_page_changed)
         ui_text(self.nav.item(0).setText,tr('1  검사 운영')); ui_text(self.compact_nav.setItemText,0,tr('1  검사 운영'))
         self.refresh_nav_labels()
         if interrupted: self.trip_fault('INTERRUPTED_STATION',tr('중단된 회차는 다시 실행하지 않습니다. 장치 확인 후 새 전체사진으로 검사하세요.'))
@@ -314,12 +322,32 @@ class StationWindow(DesktopWindow):
         if self.engine: self.engine.dispose()
         self.engine=None; self.engine_ready=False; self.model_info=None; self.stop_at=None
         self.applied_message=tr('모델이 해제됐습니다. 품목 설정에서 다시 준비할 수 있습니다.')
+    def open_teaching(self):
+        self.nav.setCurrentRow(5)
+
+    def manual_robot_active(self):
+        return getattr(getattr(self,'robot_panel',None),'worker',None) is not None
+
+    def robot_page_changed(self,index):
+        if index!=5 and self.manual_robot_active(): self.robot_panel.stop()
+
+    def require_idle(self,*,camera=False,robot=False):
+        super().require_idle(camera=camera,robot=robot)
+        if camera or robot:
+            require(not self.manual_robot_active(),'왼쪽 로봇 제어 탭에서 연결을 해제한 후 설정을 바꾸세요.')
+
+    def stop_robot(self):
+        if self.manual_robot_active(): self.robot_panel.stop()
+        super().stop_robot()
+
     def connect_robot(self):
+        require(not self.manual_robot_active(),'로봇 제어 탭에서 연결을 해제한 후 자동운전용 연결을 하세요.')
         require(self.robot is None and self.equipment['robot']['port'],tr('Dobot 포트를 등록하세요.'))
         self.robot=StationRobotPort(self.runtime,self.equipment); self.robot_seen_at=time.monotonic()
         self.robot.changed.connect(self.robot_changed); self.robot.failed.connect(self.robot_failed)
         self.robot.completed.connect(self.robot_completed); self.robot.finished.connect(self.robot_finished); self.robot.start()
     def begin(self):
+        require(not self.manual_robot_active(),'로봇 제어 탭 연결 중에는 자동 검사를 시작할 수 없습니다.')
         require(not self.running and not self.faults.active,tr('미해결 오류를 확인한 뒤 재개하세요.'))
         require(self.engine_ready and self.engine and not self.engine.stopping,tr('품목 설정에서 모델을 준비하세요.'))
         require(self.camera and self.camera_info and self.frame and time.monotonic()-self.frame_received<.5,tr('카메라의 새 영상이 필요합니다.'))
@@ -521,6 +549,9 @@ class StationWindow(DesktopWindow):
         from mes_vision.operation.status_hooks import update_context
         update_context(self)
     def closeEvent(self,event):
+        if self.manual_robot_active():
+            self.robot_panel.disconnect_robot(); event.ignore(); QTimer.singleShot(100,self.close); return
+        if getattr(self,'robot_panel',None) is not None: self.robot_panel.timer.stop()
         if self.capture_port and self.capture_port.busy and self.closing:
             event.ignore(); return
         super().closeEvent(event)

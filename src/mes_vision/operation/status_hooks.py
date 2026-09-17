@@ -1,4 +1,5 @@
 """Backend-owned values for the existing UI; VLM never supplies the verdict."""
+import time
 from mes_vision.i18n import tr, trf
 from mes_vision.qt_i18n import ui_text
 
@@ -7,6 +8,10 @@ def update_context(window):
     product = window.product or {}
     camera = bool(window.camera_info)
     robot = window.robot_state.get('state', '') if window.robot else ''
+    manual=getattr(window,'robot_panel',None)
+    if manual is not None and manual.worker is not None:
+        live=manual.last_state.get('state')=='TEACHING' and time.monotonic()-manual.received<1.2
+        robot=('수동 이동 중' if manual.last_state.get('busy') else '수동 제어 연결') if live else '수동 제어 응답 대기'
     values = {
         '품목': (product.get('name') or tr('미등록'), ''),
         '버전': (str(product.get('version', '—')), ''),

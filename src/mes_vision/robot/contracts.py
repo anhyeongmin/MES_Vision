@@ -24,6 +24,17 @@ class Pose:
 
 
 @dataclass(frozen=True)
+class JointPose:
+    j1: float
+    j2: float
+    j3: float
+    j4: float
+
+    def __post_init__(self):
+        require(all(number(v) for v in (self.j1,self.j2,self.j3,self.j4)), 'joint angles must be finite degrees')
+
+
+@dataclass(frozen=True)
 class Workspace:
     x_min: float
     x_max: float
@@ -129,7 +140,7 @@ class Command:
     plan_id: str
     stage: str
     action: str
-    target: Pose | None = None
+    target: Pose | JointPose | None = None
 
 
 @dataclass(frozen=True)
