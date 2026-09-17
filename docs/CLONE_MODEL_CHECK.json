@@ -1,0 +1,34 @@
+{
+  "environment": "fresh venv in GitHub clone",
+  "models": {
+    "overview": {
+      "loaded": true,
+      "synthetic_inference_seconds_including_load": 10.687999999994645,
+      "detections": 0
+    },
+    "objects": {
+      "loaded": true,
+      "synthetic_inference_seconds_including_load": 0.6570000000065193,
+      "detections": 0
+    },
+    "defects": {
+      "loaded": true,
+      "synthetic_inference_seconds_including_load": 0.625,
+      "detections": 0
+    }
+  },
+  "accuracy_evaluation": false,
+  "vlm": {
+    "loaded": true,
+    "supported_codes": [
+      "NG01",
+      "NG02",
+      "NG03",
+      "NG04",
+      "NG05",
+      "NG06",
+      "OK"
+    ],
+    "accuracy_evaluation": false
+  }
+}
