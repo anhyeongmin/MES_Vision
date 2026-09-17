@@ -196,7 +196,7 @@ class StationWindow(DesktopWindow):
         dialog=StationEquipmentDialog(self.equipment,self.frame,self,discover=True)
         try:
             if dialog.exec():
-                self.equipment=self.store.save_equipment(dialog.value); self.camera_info=None; self.refresh_equipment()
+                self.equipment=dialog.persist(self.store); self.camera_info=None; self.refresh_equipment()
         finally: dialog.deleteLater()
     def robot_profile(self):
         from .robot_profile_dialog import StationRobotProfileDialog

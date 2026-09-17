@@ -35,14 +35,19 @@ def inspection_camera(camera):
     return c
 
 
-def configure_equipment(root, equipment):
+def acquisition_config_path(root):
+    local = Path(root)/'artifacts/operation/camera-acquisition.json'
+    return local if local.exists() else Path(root)/'configs/camera/acquisition.json'
+
+
+def configure_equipment(root, equipment, *, spec_override=None):
     """Attach the installed lens profile; invalidate old ROI approval in memory.
 
     Persisting/confirming the new ROI still uses the existing equipment dialog.
     Never translate old polygons or robot maps by a guessed crop offset.
     """
     e = deepcopy(equipment); c = e['camera']
-    path = Path(root)/'configs/camera/acquisition.json'
+    path = acquisition_config_path(root)
     if camera_driver(c) != 'uvc':
         if c.pop('inspection_acquisition', None):
             w=e['workspace']; w.pop('acquisition_identity',None)
@@ -56,8 +61,8 @@ def configure_equipment(root, equipment):
         e['workspace'].update(roi=[], excluded=[], validation_reference='')
         e['workspace'].pop('acquisition_identity', None)
         return e
-    if not path.exists(): return e
-    config = read_json(path)
+    if not path.exists() and spec_override is None: return e
+    config = read_json(path) if spec_override is None else {'schema_version':1,'processing':spec_override}
     require(config['schema_version'] == 1, 'Acquisition configuration version changed')
     spec = deepcopy(config['processing'])
     lens = (Path(root)/spec['calibration_file']).resolve()

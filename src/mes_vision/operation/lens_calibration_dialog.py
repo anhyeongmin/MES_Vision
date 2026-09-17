@@ -133,7 +133,8 @@ class LensCalibrationDialog(QDialog):
         self.frame();require(self.confirm.isChecked(),'초점 고정 상태를 확인하세요.')
         owner=self.studio.owner;root=Path(owner.root)
         require(owner.equipment['camera']['serial']==self.settings['serial'],'장비 선택이 변경됐습니다.')
-        config=root/'configs/camera/acquisition.json';old=config.read_bytes() if config.exists() else None
+        from .acquisition import acquisition_config_path
+        config=acquisition_config_path(root);old=config.read_bytes() if config.exists() else None
         if old is not None:(self.folder/'previous-acquisition.json').write_bytes(old)
         write_json(self.folder/'previous-equipment.json',owner.equipment)
         spec=dict(kind='undistorted_center_square_v1',sensor_size=self.result['image_size'],calibration_file=str(self.path.resolve()),calibration_sha256=sha256(self.path),camera_serial=self.settings['serial'])
