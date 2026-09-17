@@ -1132,5 +1132,11 @@
   "동일 카메라 · 기존 렌즈 보정 연결": "Same camera · reconnect lens calibration",
   "기존 렌즈 보정 연결": "Reconnect existing lens calibration",
   "전에 보정했던 동일한 카메라이며 렌즈·초점을 바꾸지 않았습니까?\n기존 렌즈 보정을 연결하고 작업 영역·로봇 좌표 검증은 해제합니다.\n렌즈나 초점을 바꿨다면 취소하고 재보정하세요.": "Is this the same physical camera, with its lens and focus unchanged?\nThe existing lens calibration will be linked; workspace and robot coordinate approvals will be cleared.\nIf the lens or focus changed, cancel and recalibrate.",
-  "동일 카메라 연결 확인됨 · 저장을 누르면 적용됩니다.": "Same camera confirmed · click Save to apply."
+  "동일 카메라 연결 확인됨 · 저장을 누르면 적용됩니다.": "Same camera confirmed · click Save to apply.",
+  "검출": "Detected",
+  "의심": "Suspected",
+  "표시할 불량 없음 · 정상 확정은 아닙니다.": "No defects meet the display threshold · not a confirmed OK result.",
+  "표시 기준 미만 {count}건 · 원본 기록 보존": "{count} findings below display threshold · original evidence retained",
+  "검출 ≥ 0.5 · 의심 0.2~0.5 미만 · 최종 판정과 별도": "Detected ≥ 0.5 · suspected ≥ 0.2 and < 0.5 · separate from final verdict",
+  "불량 검출 상세": "Defect detection details"
 }

@@ -540,7 +540,9 @@ class DesktopWindow(ResponsiveWindow,ReadinessControls,RecoveryControls,HistoryC
             if assessment and not assessment.get("required") and r["status"]=="NOT_RUN": label=tr('등록 기준에서 제외')
             lines.append(tr(r["name"])+": "+label)
             from .finding_display import finding_caption
-            for f in r["findings"]: lines.append("  "+finding_caption(f))
+            from mes_vision.inspection.finding_scores import score_band
+            for f in r["findings"]:
+                if score_band(f)!="HIDDEN":lines.append("  "+finding_caption(f))
             if r["raw_score"] is not None: lines.append(trf('  점수: {v0:.4g}', v0=r['raw_score']))
             if r["criteria_version"]: lines.append(tr('  기준: ')+r["criteria_version"])
         return text_join('\n', lines)

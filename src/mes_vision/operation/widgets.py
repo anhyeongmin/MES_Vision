@@ -88,7 +88,7 @@ class Canvas(QWidget):
             if polygon:
                 p.setPen(QPen(QColor("#637ca2"),1/scale,Qt.DashLine)); p.drawPolygon(QPolygonF([QPointF(*v) for v in polygon]))
         for t in self.tracks:
-            color=QColor(COLORS.get(t["status"],"#657890")); p.setPen(QPen(color,(4 if t["track_id"]==self.selected_id else 2)/scale))
+            color=QColor(t.get('display_color') or COLORS.get(t["status"],"#657890")); p.setPen(QPen(color,(4 if t["track_id"]==self.selected_id else 2)/scale))
             b=t["box"]; p.drawRect(QRectF(b[0],b[1],b[2]-b[0],b[3]-b[1]))
             p.drawText(QPointF(b[0],max(14,b[1]-5)),t["track_id"].split(":")[-1]+" · "+str(STATES.get(t["status"],t["status"])))
         if self.drag_start and self.drag_end:

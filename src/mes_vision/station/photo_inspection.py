@@ -132,6 +132,8 @@ def run_photos(request, root, *, registry=None, resident=None):
                     product_id=bundle['product_id'],expected_count=1 if job['role']=='detail' else None,
                     inspection_batch_size=1)
                 raw=pipeline.run(frame)
+                from mes_vision.inspection.finding_scores import RULE
+                raw.config['finding_presentation']=dict(RULE)
                 if dedup_audit is not None: raw.config['detail_deduplication']=dedup_audit
                 raw.config['saved_photo']={'role':job['role'],'source_sha256':job['sha256'],
                     'image_kind':request['image_kind'],'model_bundle_digest':fingerprint(bundle),

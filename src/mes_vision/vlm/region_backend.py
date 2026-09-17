@@ -9,6 +9,7 @@ from mes_vision.inspection import Box
 from mes_vision.training.data import require, read_json, sha256
 from .backend import GenerationConfig, parse_response
 from .snapshots import load_snapshot, object_record
+from mes_vision.inspection.finding_scores import score_band, RULE
 
 SYSTEM = '관심 영역 사진을 보고 질문에 해당하는 특징만 설명하세요. 불명확하면 확인하기 어렵다고 답하세요. 전체 물체의 OK/NG를 판정하지 마세요. observation 문자열 하나를 가진 JSON만 출력하세요.'
 QUESTIONS = {'NG05': '확대 영역의 원통 구멍이 열려 있는지 설명하세요.',
@@ -37,6 +38,7 @@ def region_plan(job, codes=None):
     source = next(x for x in manifest['objects'] if x['object_id'] == job['object_id'])
     require(source['image_size'] == [crop['width'],crop['height']], 'Region crop dimensions mismatch')
     regions, unsupported = [], []
+    hidden = 0
     for check in record['checks']:
         if check['check_id'] != 'known_defects': continue
         for finding in check['findings']:
@@ -54,7 +56,11 @@ def region_plan(job, codes=None):
             if code=='NG01': box=[0,0,crop['width'],crop['height']]
             score = finding.get('score')
             require(score is None or (type(score) in (int,float) and math.isfinite(score) and 0 <= score <= 1), 'Invalid region score')
-            regions.append({'code':code,'box':box,'score':score or 0})
+            band=score_band(finding)
+            if band=='HIDDEN':
+                hidden+=1
+                continue
+            regions.append({'code':code,'box':box,'score':score or 0,'score_band':band})
     regions.sort(key=lambda r:-r['score'])
     # Multiple missing-feature boxes still ask the same whole-object question once.
     whole_seen=False; unique=[]
@@ -64,10 +70,11 @@ def region_plan(job, codes=None):
             whole_seen=True
         unique.append(region)
     regions=unique
-    if not regions and not unsupported and 'OK' in codes:
+    if not regions and not unsupported and not hidden and 'OK' in codes:
         regions=[{'code':'OK','box':[0,0,crop['width'],crop['height']],'score':0}]
     return {'image':str(Path(job['snapshot_path'])/source['file']), 'regions':regions[:3],
             'omitted':max(0,len(regions)-3), 'unsupported':unsupported,
+            'hidden_below_display_min':hidden, 'display_rule':dict(RULE),
             'object_id':job['object_id'],'snapshot_digest':job['snapshot_digest']}
 
 def parse_region(raw):
@@ -169,7 +176,7 @@ class RegionBackend:
                 if expired or truncated:break
                 text=parse_region(raw);details.append(dict(region,raw_text=raw,observation=text,
                     adapter='retained' if region['code'] in self.retained_codes else 'default'))
-            observation='\n'.join(f"{'전체 관찰' if r['code']=='OK' else r['code']}: {r['observation']}" for r in details) or '추가 설명을 완료하지 못했습니다.'
+            observation='\n'.join(f"{'전체 관찰' if r['code']=='OK' else r['code']+' ['+('의심' if r.get('score_band')=='SUSPECT' else '검출')+']'}: {r['observation']}" for r in details) or '추가 설명을 완료하지 못했습니다.'
             if plan['unsupported'] or plan['omitted']:observation+='\n지원 범위 밖이거나 처리 한도를 넘은 후보는 설명하지 않았습니다.'
         # Deliberately conservative: regional descriptions never approve a whole object.
         return {'raw_text':json.dumps({'observation':observation,'needs_review':True},ensure_ascii=False),

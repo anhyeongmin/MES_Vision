@@ -8,10 +8,10 @@ from uuid import uuid4
 from PySide6.QtCore import QProcess, QProcessEnvironment, QTimer, Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, QSplitter,
-    QWidget, QPlainTextEdit, QTableWidgetItem, QFileDialog, QCheckBox, QDoubleSpinBox)
+    QWidget, QPlainTextEdit, QTextEdit, QTableWidgetItem, QFileDialog, QCheckBox, QDoubleSpinBox)
 from mes_vision.operation.widgets import button, table
 from mes_vision.operation.image_view import ImagePanel
-from mes_vision.operation.finding_display import object_overlays, finding_caption
+from mes_vision.operation.finding_display import object_overlays, finding_summary, finding_details_html
 from mes_vision.training.data import read_json, write_json, sha256, require
 from mes_vision.vlm.snapshots import load_snapshot
 from .photo_inspection import open_results
@@ -86,7 +86,7 @@ class ManualInspectionDialog(QDialog):
         dl.addWidget(QLabel('선택 물체의 저장된 상세사진'))
         self.detail = ImagePanel(square=False); self.detail.setMinimumHeight(260); dl.addWidget(self.detail, 1)
         self.detail.canvas.placeholder = '물체 번호를 선택하고 상세사진을 촬영하세요.'
-        self.reasons = QPlainTextEdit(); self.reasons.setReadOnly(True); self.reasons.setMaximumHeight(85); dl.addWidget(self.reasons)
+        self.reasons = QTextEdit(); self.reasons.setReadOnly(True); self.reasons.setMaximumHeight(85); dl.addWidget(self.reasons)
         vlm_row = QHBoxLayout(); dl.addLayout(vlm_row)
         self.vlm_enabled = QCheckBox('VLM 보조 설명'); self.vlm_enabled.setChecked(self.vlm_queue.enabled())
         self.vlm_enabled.toggled.connect(lambda enabled: self.vlm_guard(lambda: self.toggle_manual_vlm(enabled)))
@@ -336,8 +336,7 @@ class ManualInspectionDialog(QDialog):
             identity = obj['manual_id']; b=obj['effective_box']; detail=self.details.get(identity)
             text = '미촬영' if detail is None else ('결과 있음 · 보류' if detail['associated'] else '재촬영 필요')
             if detail and detail['associated']:
-                codes=sorted({f['defect_code'] for o in detail['result']['objects'] for c in o['checks'] for f in c['findings'] if f.get('defect_code')})
-                text = ', '.join(codes) if codes else '불량 미검출 · 보류'
+                text = finding_summary(detail['result']['objects']) or '표시할 불량 없음 · 보류'
             for j, value in enumerate((identity, f"{(b['x1']+b['x2'])/2:.1f} / {(b['y1']+b['y2'])/2:.1f}", text)):
                 self.table.setItem(i,j,QTableWidgetItem(value))
             overlay=object_overlays(obj,identity=identity)[0]; overlay.update(label=identity+' · '+text, status='REVIEW' if detail else 'INSPECTING'); tracks.append(overlay)
@@ -358,13 +357,10 @@ class ManualInspectionDialog(QDialog):
             self.detail.canvas.set_file(Path(d['snapshot'])/'frame.png')
             lines=['물체 '+identity+'번 · 사용자가 연결한 상세사진', '최종 판정: 보류 (판정 기준 미검증)']
             if not d['associated']: lines.append('중앙에 물체 하나가 검출되지 않았습니다. 다시 촬영하세요.')
-            findings=[]
             for obj in d['result']['objects']:
                 self.detail.canvas.tracks.extend(object_overlays(obj))
-                findings.extend(finding_caption(f) for c in obj['checks'] for f in c['findings'])
                 lines.extend('검사 오류: '+c['check_id'] for c in obj['checks'] if c['status']=='ERROR')
-            lines.extend(findings or ['검출된 불량 없음 · 정상 확정은 아닙니다.'])
-            self.reasons.setPlainText('\n'.join(lines))
+            self.reasons.setHtml(finding_details_html(lines,d['result']['objects']))
         else:
             self.detail.canvas.pixmap=QPixmap(); self.reasons.setPlainText('물체 '+identity+'번 위로 카메라를 옮긴 뒤 상세검사 버튼을 누르세요.')
         self.detail.canvas.update(); self.update_controls()
@@ -392,9 +388,13 @@ class ManualInspectionDialog(QDialog):
         # Bind to the immutable snapshot, not the current row or camera image.
         _, result, digest = load_snapshot(detail['snapshot'], expected_digest=detail['snapshot_digest'])
         obj = result['objects'][0]
-        codes = {f.get('defect_code') for c in obj['checks'] for f in c['findings']}
-        capabilities=self.vlm_capabilities()
-        if not codes.intersection(capabilities) and not (not codes and 'OK' in capabilities): return
+        from mes_vision.vlm.region_backend import region_plan
+        plan=region_plan(dict(snapshot_path=detail['snapshot'],snapshot_digest=detail['snapshot_digest'],object_id=obj['object_id']),self.vlm_capabilities())
+        if not plan['regions']:
+            detail['vlm_no_regions']=True
+            self.refresh_vlm()
+            return
+        detail.pop('vlm_no_regions',None)
         job_id = detail.get('vlm_job')
         if job_id and retry:
             job = self.vlm_queue.get(job_id)
@@ -470,6 +470,7 @@ class ManualInspectionDialog(QDialog):
         text = 'VLM 보조 정보 · 기본 판정을 변경하지 않습니다.\n'
         if not enabled: text += 'OFF · 기본 판정과 불량 종류는 계속 확인할 수 있습니다.'
         elif not detail or not detail['associated']: text += '물체 하나가 연결된 상세사진을 촬영하세요.'
+        elif detail.get('vlm_no_regions'): text += '표시 기준을 통과한 지원 영역 없음 · 추가 분석하지 않음 · 정상 확정 아님'
         elif not detail.get('vlm_job'): text += '분석 요청 없음 · 지원 범위: '+', '.join(sorted(self.vlm_capabilities()))
         else:
             job = self.vlm_queue.get(detail['vlm_job'])

@@ -12,7 +12,7 @@ from mes_vision.vlm.snapshots import load_snapshot
 from mes_vision.operation.widgets import button,table
 from mes_vision.operation.image_view import ImagePanel
 from mes_vision.operation.responsive import FlowLayout
-from mes_vision.operation.finding_display import object_overlays,finding_caption
+from mes_vision.operation.finding_display import object_overlays,finding_summary,finding_details_text
 from .photo_inspection import open_results
 
 
@@ -194,8 +194,8 @@ class PhotoInspectionDialog(QDialog):
             if record['role']=='overview':
                 for overlay in overlays: overlay.update(status='INSPECTING',label=obj['object_id'].split(':')[-1])
             tracks.extend(overlays)
-            candidates=sorted({f['defect_code'] for c in obj['checks'] for f in c['findings'] if f.get('defect_code')})
-            values=(obj['object_id'].split(':')[-1],tr('위치 검출') if record['role']=='overview' else tr('판정 보류'),', '.join(candidates) or '—')
+            candidates=finding_summary([obj])
+            values=(obj['object_id'].split(':')[-1],tr('위치 검출') if record['role']=='overview' else tr('판정 보류'),candidates or '—')
             for j,value in enumerate(values): self.objects.setItem(i,j,ui_text(QTableWidgetItem,value))
         self.objects.blockSignals(False); self.original.canvas.tracks=tracks; self.original.canvas.update()
         if result['objects']: self.select_object(result['objects'][0]['object_id'])
@@ -222,9 +222,8 @@ class PhotoInspectionDialog(QDialog):
             if not self.record['association_confirmed']:
                 lines.append(tr('상세사진에서 선택한 물체 하나를 확실하게 식별하지 못했습니다.'))
             else:
-                findings=[f for c in obj['checks'] for f in c['findings']]
-                lines.extend([tr('불량 후보:')]+[finding_caption(f) for f in findings] if findings else [tr('알려진 불량 후보 없음 · 정상 확정 아님')])
+                lines.append(tr('불량 검출 상세'))
             for check in obj['checks']:
                 if check['status']=='ERROR': lines.append(tr('검사 오류')+' · '+check['check_id'])
         lines.append(tr('표시 영역은 AI 예측입니다. 정답 영역이 아닙니다.'))
-        ui_text(self.reasons.setPlainText,text_join('\n',lines))
+        ui_text(self.reasons.setPlainText,finding_details_text(lines,[obj]))
