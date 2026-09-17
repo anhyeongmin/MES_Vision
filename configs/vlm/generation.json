@@ -1,0 +1,6 @@
+{
+  "max_new_tokens": 128,
+  "timeout_seconds": 120,
+  "image_max_edge": 448,
+  "language": "ko"
+}

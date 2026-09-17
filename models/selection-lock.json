@@ -1,0 +1,504 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-09-05",
+  "state": "selected_assets; not a release approval",
+  "models": [
+    {
+      "id": "qwen",
+      "repo_id": "Qwen/Qwen3.5-4B",
+      "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+      "license": "apache-2.0",
+      "local_dir": "models/qwen3.5-4b"
+    },
+    {
+      "id": "dinov2",
+      "repo_id": "facebook/dinov2-small",
+      "revision": "ed25f3a31f01632728cabb09d1542f84ab7b0056",
+      "license": "apache-2.0",
+      "local_dir": "models/dinov2-small"
+    }
+  ],
+  "references": [
+    {
+      "id": "patchcore",
+      "repository": "amazon-science/patchcore-inspection",
+      "revision": "fcaa92f124fb1ad74a7acf56726decd4b27cbcad",
+      "role": "reference-source; not installed as an upstream runtime"
+    },
+    {
+      "id": "dinov2-code",
+      "repository": "facebookresearch/dinov2",
+      "revision": "7764ea0f912e53c92e82eb78a2a1631e92725fc8",
+      "role": "reference-source; not installed as an upstream runtime"
+    }
+  ],
+  "packages": [
+    {
+      "name": "pyside6-essentials",
+      "version": "6.11.2",
+      "license": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
+      "scope": "direct pin; full dependency resolution in step 03 / packaging in step 16"
+    },
+    {
+      "name": "shiboken6",
+      "version": "6.11.2",
+      "license": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
+      "scope": "direct pin; full dependency resolution in step 03 / packaging in step 16"
+    },
+    {
+      "name": "pyinstaller",
+      "version": "6.22.2",
+      "license": "GPLv2-or-later with a special exception which allows to use PyInstaller to build and distribute non-free programs (including commercial ones)",
+      "scope": "direct pin; full dependency resolution in step 03 / packaging in step 16"
+    }
+  ],
+  "assets": [
+    {
+      "id": "qwen/LICENSE",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/LICENSE",
+      "path": "models/qwen3.5-4b/LICENSE",
+      "size": 11544,
+      "sha256": null,
+      "git_blob_sha1": "f938136e3adacfd92be087f6e113b5d6d97f678f",
+      "category": "model"
+    },
+    {
+      "id": "qwen/README.md",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/README.md",
+      "path": "models/qwen3.5-4b/README.md",
+      "size": 77661,
+      "sha256": null,
+      "git_blob_sha1": "7950a3aadf378cd13758097bc52f0ed849a59007",
+      "category": "model"
+    },
+    {
+      "id": "qwen/chat_template.jinja",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/chat_template.jinja",
+      "path": "models/qwen3.5-4b/chat_template.jinja",
+      "size": 7756,
+      "sha256": null,
+      "git_blob_sha1": "a585dec894e63da457d9440ec6aa7caa16d20860",
+      "category": "model"
+    },
+    {
+      "id": "qwen/config.json",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/config.json",
+      "path": "models/qwen3.5-4b/config.json",
+      "size": 3161,
+      "sha256": null,
+      "git_blob_sha1": "557d961b205319c6a7da5f757f565b69b3967b7d",
+      "category": "model"
+    },
+    {
+      "id": "qwen/merges.txt",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/merges.txt",
+      "path": "models/qwen3.5-4b/merges.txt",
+      "size": 3353259,
+      "sha256": null,
+      "git_blob_sha1": "a494e019ca1502219fd0128658b979e5f05ae8e8",
+      "category": "model"
+    },
+    {
+      "id": "qwen/model.safetensors-00001-of-00002.safetensors",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/model.safetensors-00001-of-00002.safetensors",
+      "path": "models/qwen3.5-4b/model.safetensors-00001-of-00002.safetensors",
+      "size": 5329398688,
+      "sha256": "26a93f066e1916adb13453dae5a0c707c0fbc71299ed98779571a907b8e74c61",
+      "git_blob_sha1": null,
+      "category": "model"
+    },
+    {
+      "id": "qwen/model.safetensors-00002-of-00002.safetensors",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/model.safetensors-00002-of-00002.safetensors",
+      "path": "models/qwen3.5-4b/model.safetensors-00002-of-00002.safetensors",
+      "size": 3990429408,
+      "sha256": "cb544bd9bfae93dc59b0f22b292f5933573854a7f9b97835c67060d7d910e188",
+      "git_blob_sha1": null,
+      "category": "model"
+    },
+    {
+      "id": "qwen/model.safetensors.index.json",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/model.safetensors.index.json",
+      "path": "models/qwen3.5-4b/model.safetensors.index.json",
+      "size": 76196,
+      "sha256": null,
+      "git_blob_sha1": "fddda6039f7c1d17260c9e923b8a72fd025d9a86",
+      "category": "model"
+    },
+    {
+      "id": "qwen/preprocessor_config.json",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/preprocessor_config.json",
+      "path": "models/qwen3.5-4b/preprocessor_config.json",
+      "size": 390,
+      "sha256": null,
+      "git_blob_sha1": "2ea84a437d448ff71b08df68fdd949d5cc4ebb64",
+      "category": "model"
+    },
+    {
+      "id": "qwen/tokenizer.json",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/tokenizer.json",
+      "path": "models/qwen3.5-4b/tokenizer.json",
+      "size": 12807982,
+      "sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+      "git_blob_sha1": null,
+      "category": "model"
+    },
+    {
+      "id": "qwen/tokenizer_config.json",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/tokenizer_config.json",
+      "path": "models/qwen3.5-4b/tokenizer_config.json",
+      "size": 16710,
+      "sha256": null,
+      "git_blob_sha1": "eda48d3e75a8e59a8479ee4ec8b37f76e711d9c1",
+      "category": "model"
+    },
+    {
+      "id": "qwen/video_preprocessor_config.json",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/video_preprocessor_config.json",
+      "path": "models/qwen3.5-4b/video_preprocessor_config.json",
+      "size": 385,
+      "sha256": null,
+      "git_blob_sha1": "3ba673a5ad7d4d13f54155ecd38b2a94a6dac8fe",
+      "category": "model"
+    },
+    {
+      "id": "qwen/vocab.json",
+      "url": "https://huggingface.co/Qwen/Qwen3.5-4B/resolve/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a/vocab.json",
+      "path": "models/qwen3.5-4b/vocab.json",
+      "size": 6722759,
+      "sha256": null,
+      "git_blob_sha1": "0aa0ce0658d60ac4a5d609f4eadb0e8e43514176",
+      "category": "model"
+    },
+    {
+      "id": "qwen/metadata",
+      "url": "https://huggingface.co/api/models/Qwen/Qwen3.5-4B/revision/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a?blobs=true",
+      "path": "licenses/selection/qwen-metadata.json",
+      "size": 22108,
+      "sha256": "62a6ecd5fbc5becec4e6dcb005d35daf70c4850fddda80767e062b0964a38843",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "dinov2/README.md",
+      "url": "https://huggingface.co/facebook/dinov2-small/resolve/ed25f3a31f01632728cabb09d1542f84ab7b0056/README.md",
+      "path": "models/dinov2-small/README.md",
+      "size": 3033,
+      "sha256": null,
+      "git_blob_sha1": "6b3380957df44ed203ec1d5102e1245accbbbba9",
+      "category": "model"
+    },
+    {
+      "id": "dinov2/config.json",
+      "url": "https://huggingface.co/facebook/dinov2-small/resolve/ed25f3a31f01632728cabb09d1542f84ab7b0056/config.json",
+      "path": "models/dinov2-small/config.json",
+      "size": 547,
+      "sha256": null,
+      "git_blob_sha1": "5664b325e6258d3960fad8c4c1cff958f3cc2272",
+      "category": "model"
+    },
+    {
+      "id": "dinov2/model.safetensors",
+      "url": "https://huggingface.co/facebook/dinov2-small/resolve/ed25f3a31f01632728cabb09d1542f84ab7b0056/model.safetensors",
+      "path": "models/dinov2-small/model.safetensors",
+      "size": 88249960,
+      "sha256": "ae1e99fcefd534ed978cdeb8326f08030c96e28b7a81ffcbc98a857c84d14be1",
+      "git_blob_sha1": null,
+      "category": "model"
+    },
+    {
+      "id": "dinov2/preprocessor_config.json",
+      "url": "https://huggingface.co/facebook/dinov2-small/resolve/ed25f3a31f01632728cabb09d1542f84ab7b0056/preprocessor_config.json",
+      "path": "models/dinov2-small/preprocessor_config.json",
+      "size": 436,
+      "sha256": null,
+      "git_blob_sha1": "ff5b47c2edcd1d3556d63c01a65d93b58b9efce1",
+      "category": "model"
+    },
+    {
+      "id": "dinov2/metadata",
+      "url": "https://huggingface.co/api/models/facebook/dinov2-small/revision/ed25f3a31f01632728cabb09d1542f84ab7b0056?blobs=true",
+      "path": "licenses/selection/dinov2-metadata.json",
+      "size": 4114,
+      "sha256": "ad7b0dcb8238809dddb95acf85a5bf1c737cee6f8215f8250ed39a48ff6e5c18",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "patchcore/LICENSE",
+      "url": "https://raw.githubusercontent.com/amazon-science/patchcore-inspection/fcaa92f124fb1ad74a7acf56726decd4b27cbcad/LICENSE",
+      "path": "licenses/selection/patchcore-LICENSE",
+      "size": 10142,
+      "sha256": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "patchcore/README.md",
+      "url": "https://raw.githubusercontent.com/amazon-science/patchcore-inspection/fcaa92f124fb1ad74a7acf56726decd4b27cbcad/README.md",
+      "path": "licenses/selection/patchcore-README.md",
+      "size": 9595,
+      "sha256": "b5ce522d4c9fdec9d98d7f50ea0e7fe72edf6cb767b97ce0ea82a3b6cc0651ee",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "patchcore/src/patchcore/patchcore.py",
+      "url": "https://raw.githubusercontent.com/amazon-science/patchcore-inspection/fcaa92f124fb1ad74a7acf56726decd4b27cbcad/src/patchcore/patchcore.py",
+      "path": "licenses/selection/patchcore-src_patchcore_patchcore.py.txt",
+      "size": 11936,
+      "sha256": "70cb638cd78692159e4a210424b37763558e8af8969109ef3d83765c351f3027",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "patchcore/src/patchcore/common.py",
+      "url": "https://raw.githubusercontent.com/amazon-science/patchcore-inspection/fcaa92f124fb1ad74a7acf56726decd4b27cbcad/src/patchcore/common.py",
+      "path": "licenses/selection/patchcore-src_patchcore_common.py.txt",
+      "size": 13406,
+      "sha256": "e18e05d976f029ecad1fe786c270fdb8d6f2f1bf69d466f22f90704154e7fe7d",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "patchcore/src/patchcore/sampler.py",
+      "url": "https://raw.githubusercontent.com/amazon-science/patchcore-inspection/fcaa92f124fb1ad74a7acf56726decd4b27cbcad/src/patchcore/sampler.py",
+      "path": "licenses/selection/patchcore-src_patchcore_sampler.py.txt",
+      "size": 6961,
+      "sha256": "39612cd2b486865ece304348f740f4bc700a1c2e8684fbab3c2ed016c7801f2d",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "patchcore/requirements.txt",
+      "url": "https://raw.githubusercontent.com/amazon-science/patchcore-inspection/fcaa92f124fb1ad74a7acf56726decd4b27cbcad/requirements.txt",
+      "path": "licenses/selection/patchcore-requirements.txt.txt",
+      "size": 222,
+      "sha256": "42d51370e068ec5b7335b4dbc9fce0d2811d7df1b9d20f62a18deed6b4c351d6",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "dinov2-code/LICENSE",
+      "url": "https://raw.githubusercontent.com/facebookresearch/dinov2/7764ea0f912e53c92e82eb78a2a1631e92725fc8/LICENSE",
+      "path": "licenses/selection/dinov2-code-LICENSE",
+      "size": 11359,
+      "sha256": "600cc67cc4cb2f5ea317dcfc687ad1c74dc4bec8782bbe9db0afd83513b935b7",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "dinov2-code/README.md",
+      "url": "https://raw.githubusercontent.com/facebookresearch/dinov2/7764ea0f912e53c92e82eb78a2a1631e92725fc8/README.md",
+      "path": "licenses/selection/dinov2-code-README.md",
+      "size": 32799,
+      "sha256": "d1bc2e9686522bbd66ed6123dc81eb36b3a98e8ea9a2ca97778f54a1c641c9e1",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "pyside6-essentials/wheel",
+      "url": "https://files.pythonhosted.org/packages/dc/09/d2662684aee4d3f027ff9b1e965f22301bc28ffc5b7f167658508e4475dc/pyside6_essentials-6.11.2-cp310-abi3-win_amd64.whl",
+      "path": "vendor/wheels/pyside6_essentials-6.11.2-cp310-abi3-win_amd64.whl",
+      "size": 76913043,
+      "sha256": "c8a29def77032773a30879f7f24415b5395ad08592d147c170824ef4c735dfc1",
+      "git_blob_sha1": null,
+      "category": "wheel"
+    },
+    {
+      "id": "pyside6-essentials/metadata",
+      "url": "https://pypi.org/pypi/pyside6-essentials/6.11.2/json",
+      "path": "licenses/selection/pyside6-essentials-metadata.json",
+      "size": 8568,
+      "sha256": "4de4a20d9bdd40939e667df3ae60d307fa1441d9afe50828a4a87b827af8850e",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "shiboken6/wheel",
+      "url": "https://files.pythonhosted.org/packages/ce/6b/fee1b4814317e4664e318644c9c007676c65a71e5b2b9d3ac4121a94dc0a/shiboken6-6.11.2-cp310-abi3-win_amd64.whl",
+      "path": "vendor/wheels/shiboken6-6.11.2-cp310-abi3-win_amd64.whl",
+      "size": 1226578,
+      "sha256": "6ab0eba1c904455df621f9a6df3ca2bb896bab8670572d2bc4e37804ae91f19a",
+      "git_blob_sha1": null,
+      "category": "wheel"
+    },
+    {
+      "id": "shiboken6/metadata",
+      "url": "https://pypi.org/pypi/shiboken6/6.11.2/json",
+      "path": "licenses/selection/shiboken6-metadata.json",
+      "size": 7199,
+      "sha256": "e757b67d82417fcbd591ed7f15c8e54caaccd9e65648c1bacce50e957ec544ab",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "pyinstaller/wheel",
+      "url": "https://files.pythonhosted.org/packages/3f/53/8ba1d0f6159b490f700eac6161a4be5f0d4672608a6dae9fd73679f183ee/pyinstaller-6.22.2-py3-none-win_amd64.whl",
+      "path": "vendor/wheels/pyinstaller-6.22.2-py3-none-win_amd64.whl",
+      "size": 1405725,
+      "sha256": "9b990fa6bbe143572f06644a984ad0d7aa2e2ccc6929d4916031343a5888e9a7",
+      "git_blob_sha1": null,
+      "category": "wheel"
+    },
+    {
+      "id": "pyinstaller/metadata",
+      "url": "https://pypi.org/pypi/pyinstaller/6.22.2/json",
+      "path": "licenses/selection/pyinstaller-metadata.json",
+      "size": 18999,
+      "sha256": "b8df4b17c251648ebe895a91774954ba95195544f0474236851bdce404070bdb",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "qt-lgpl-obligations",
+      "url": "https://www.qt.io/development/open-source-lgpl-obligations",
+      "path": "licenses/selection/qt-lgpl-obligations.html",
+      "size": 171059,
+      "sha256": "af30680760dcf356f152103b06f50ce48918e24eb7cc57fd8e84f883d4d5a3d9",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "qt-package-details",
+      "url": "https://doc.qt.io/qtforpython-6.10/package_details.html",
+      "path": "licenses/selection/qt-package-details.html",
+      "size": 22767,
+      "sha256": "7b808b896ed8cbddfb38453ac4114077ffbded1a911abc9e0a97d050e8da889a",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "qtcore-licenses",
+      "url": "https://doc.qt.io/qt-6/qtcore-index.html",
+      "path": "licenses/selection/qtcore-licenses.html",
+      "size": 29074,
+      "sha256": "0cd18800c0d1eae974065467abc788dda1dcad1cc8285d1411f255d738627e74",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "qtgui-licenses",
+      "url": "https://doc.qt.io/qt-6/qtgui-index.html",
+      "path": "licenses/selection/qtgui-licenses.html",
+      "size": 27821,
+      "sha256": "8305e861ba71a07d4045053b3aa3f0aaa31aed87a982a38fcd22dd70e34d45e0",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "qtwidgets-licenses",
+      "url": "https://doc.qt.io/qt-6/qtwidgets-index.html",
+      "path": "licenses/selection/qtwidgets-licenses.html",
+      "size": 27109,
+      "sha256": "2802692af139b1c664b022cae3bfed54603fa16a4c6dedfaf5bff826dead32f2",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "pyinstaller-license",
+      "url": "https://pyinstaller.org/en/v6.22.2/license.html",
+      "path": "licenses/selection/pyinstaller-license.html",
+      "size": 8679,
+      "sha256": "ed4ffb7f2766c9091f545c0ea48d6299897fd1d4d84418e2e023c02c268958f9",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "pyside-pyside-setup/release",
+      "url": "https://api.github.com/repos/pyside/pyside-setup/commits/v6.11.2",
+      "path": "licenses/selection/pyside-pyside-setup-release.json",
+      "size": 5973,
+      "sha256": "ebf13016f581e5728d84dc9878438a9cf122b80f7f798c06ff36f3a12881f7ca",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "pyside-pyside-setup/LGPL-3.0-only.txt",
+      "url": "https://raw.githubusercontent.com/pyside/pyside-setup/24627cd36e1593adf22eb1f2950e4248e7bcc1ec/LICENSES/LGPL-3.0-only.txt",
+      "path": "licenses/selection/pyside-pyside-setup-LGPL-3.0-only.txt",
+      "size": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "pyside-pyside-setup/GPL-3.0-only.txt",
+      "url": "https://raw.githubusercontent.com/pyside/pyside-setup/24627cd36e1593adf22eb1f2950e4248e7bcc1ec/LICENSES/GPL-3.0-only.txt",
+      "path": "licenses/selection/pyside-pyside-setup-GPL-3.0-only.txt",
+      "size": 35147,
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "qt-qtbase/release",
+      "url": "https://api.github.com/repos/qt/qtbase/commits/v6.11.2",
+      "path": "licenses/selection/qt-qtbase-release.json",
+      "size": 5545,
+      "sha256": "48007f4268f43a94f2d2fa6865aafa53d773168a7f60629b55100f68dd9843cc",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "qt-qtbase/LGPL-3.0-only.txt",
+      "url": "https://raw.githubusercontent.com/qt/qtbase/ef55f427f2c8b410d34f8a7681020a3000cf6866/LICENSES/LGPL-3.0-only.txt",
+      "path": "licenses/selection/qt-qtbase-LGPL-3.0-only.txt",
+      "size": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "qt-qtbase/GPL-3.0-only.txt",
+      "url": "https://raw.githubusercontent.com/qt/qtbase/ef55f427f2c8b410d34f8a7681020a3000cf6866/LICENSES/GPL-3.0-only.txt",
+      "path": "licenses/selection/qt-qtbase-GPL-3.0-only.txt",
+      "size": 35147,
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "rfdetr/model",
+      "url": "https://storage.googleapis.com/rfdetr/small_coco/checkpoint_best_regular.pth",
+      "path": "models/rf-detr-small.pth",
+      "size": 386045550,
+      "sha256": "d81979a9213a2109345158ce9232668df4c1ae52e9b8db3f2ec0a8cbad959b33",
+      "git_blob_sha1": null,
+      "category": "model"
+    },
+    {
+      "id": "rfdetr/RF-DETR-LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/roboflow/rf-detr/1.9.4/LICENSE",
+      "path": "licenses/RF-DETR-LICENSE.txt",
+      "size": 11345,
+      "sha256": "8cabf52c61130fc97a7e5da5e3685ccf44841c0c53d6f881189369b136603cca",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "rfdetr/RF-DETR-README.md",
+      "url": "https://raw.githubusercontent.com/roboflow/rf-detr/1.9.4/README.md",
+      "path": "licenses/RF-DETR-README.md",
+      "size": 26220,
+      "sha256": "497b555afad4c6b1c18d0d29b8220225034281975e71e80ae4666451a2747123",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    },
+    {
+      "id": "rfdetr/RF-DETR-model_weights.py.txt",
+      "url": "https://raw.githubusercontent.com/roboflow/rf-detr/1.9.4/src/rfdetr/assets/model_weights.py",
+      "path": "licenses/RF-DETR-model_weights.py.txt",
+      "size": 16153,
+      "sha256": "0649bedde4d77dff36f0724f43c04da006ddbbd347de54b070734a58642b4e39",
+      "git_blob_sha1": null,
+      "category": "evidence"
+    }
+  ],
+  "existing_baseline": {
+    "manifest": "models/manifest.json",
+    "sha256": "c4e5651f9b7e19ff62aa27d930082badb9311e0d72cfd6985993d54ad4c96ee9",
+    "package": "rfdetr==1.9.4",
+    "status": "previously installed; retained"
+  }
+}

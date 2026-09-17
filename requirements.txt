@@ -1,0 +1,25 @@
+# Direct development dependencies. Install CUDA torch first via scripts/setup.ps1.
+# requirements-lock.txt records the full verified environment.
+torch==2.9.1+cu128
+torchvision==0.24.1+cu128
+rfdetr==1.9.4
+transformers==5.16.1
+accelerate==1.14.0
+peft==0.20.0
+pytorch-lightning==2.6.5
+torchmetrics==1.9.0
+faster-coco-eval==1.8.0
+pycocotools==2.0.11
+opencv-python-headless==5.0.0.93
+PySide6-Essentials==6.11.2
+shiboken6==6.11.2
+# Direct image-input dependencies; already installed and pinned in requirements-lock.txt.
+numpy==2.5.2
+pillow==12.3.0
+av==18.1.0
+# Direct collection revision locking; already in requirements-lock.txt.
+filelock==3.32.3
+# Production D405 color input and original Magician serial adapter.
+pyrealsense2==2.58.4.10922
+pyserial==3.5
+cv2-enumerate-cameras==1.3.3

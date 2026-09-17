@@ -1,0 +1,30 @@
+{
+  "recorded_at_utc": "2026-09-05T06:40:19.551715+00:00",
+  "model": "RF-DETR Small (Detection)",
+  "rfdetr_version": "1.9.4",
+  "weights_file": "models\\rf-detr-small.pth",
+  "source_url": "https://storage.googleapis.com/rfdetr/small_coco/checkpoint_best_regular.pth",
+  "bytes": 386045550,
+  "md5": "fb37061c1af7bace359c91b723a8d5c1",
+  "sha256": "d81979a9213a2109345158ce9232668df4c1ae52e9b8db3f2ec0a8cbad959b33",
+  "license": "Apache-2.0",
+  "license_scope": "Official Small detection checkpoint and rfdetr code; not Plus components or the entire dependency stack.",
+  "pretraining": "Official COCO checkpoint; NOT trained for the project's OK/NG classes.",
+  "sources": [
+    {
+      "file": "licenses\\RF-DETR-LICENSE.txt",
+      "source": "https://raw.githubusercontent.com/roboflow/rf-detr/1.9.4/LICENSE",
+      "sha256": "8cabf52c61130fc97a7e5da5e3685ccf44841c0c53d6f881189369b136603cca"
+    },
+    {
+      "file": "licenses\\RF-DETR-README.md",
+      "source": "https://raw.githubusercontent.com/roboflow/rf-detr/1.9.4/README.md",
+      "sha256": "497b555afad4c6b1c18d0d29b8220225034281975e71e80ae4666451a2747123"
+    },
+    {
+      "file": "licenses\\RF-DETR-model_weights.py.txt",
+      "source": "https://raw.githubusercontent.com/roboflow/rf-detr/1.9.4/src/rfdetr/assets/model_weights.py",
+      "sha256": "0649bedde4d77dff36f0724f43c04da006ddbbd347de54b070734a58642b4e39"
+    }
+  ]
+}

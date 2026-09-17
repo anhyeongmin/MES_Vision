@@ -1,0 +1,4 @@
+# Direct UI selections. Resolve and verify with the existing environment in step 03.
+# Official Windows wheel hashes: models/selection-lock.json
+PySide6-Essentials==6.11.2
+shiboken6==6.11.2

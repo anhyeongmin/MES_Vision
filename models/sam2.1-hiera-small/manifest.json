@@ -1,0 +1,31 @@
+{
+  "repository": "facebook/sam2.1-hiera-small",
+  "revision": "ee5bba1d82bb8749febdf90f45e84b687142ba03",
+  "license": "Apache-2.0",
+  "license_source": "https://raw.githubusercontent.com/facebookresearch/sam2/main/LICENSE",
+  "license_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+  "purpose": "annotation assistance only",
+  "files": {
+    "config.json": {
+      "sha256": "97ff9f65b76d107acda4247885f0a5555d0048850ae3c5f97183df289aaecde9",
+      "bytes": 5698
+    },
+    "model.safetensors": {
+      "sha256": "0a4067b11ce1e23d5229203f11c718a823060d15a4b23fa2372a7d4b77cbbc60",
+      "bytes": 184305280
+    },
+    "preprocessor_config.json": {
+      "sha256": "6ebf229ee259368ce4a8d4f2fe893a72b053023710853e257253939e601f583d",
+      "bytes": 683
+    },
+    "processor_config.json": {
+      "sha256": "f8a68e865cfad115c1c2763f3d93eca7b1c622da06da2a9273eb437fb2389b6d",
+      "bytes": 95
+    },
+    "README.md": {
+      "sha256": "6ec2d54879e41ad876d8cded0d641e8bc6ab74d5e095a73afc3f8406372ee6e9",
+      "bytes": 19974
+    }
+  },
+  "runtime": "installed transformers; local_files_only; no remote code"
+}

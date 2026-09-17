@@ -1,0 +1,65 @@
+{
+  "image_kind": "synthetic",
+  "images": [
+    {
+      "role": "overview",
+      "path": "datasets/ash-synthetic-v2/training/overview-objects/test/test-o0000.png",
+      "sha256": "a9fa96b42b39df3ee92f59790a56809525a94ef243fa99b6ebf6ae9472929113"
+    },
+    {
+      "role": "overview",
+      "path": "datasets/ash-synthetic-v2/training/overview-objects/test/test-o0001.png",
+      "sha256": "ed9661a1ae609a9a6d2301c53cd86eef91e611337330cb1e0dbf8e120303cfcd"
+    },
+    {
+      "role": "overview",
+      "path": "datasets/ash-synthetic-v2/training/overview-objects/test/test-o0002.png",
+      "sha256": "bae980c8fe23984b375271dd3db59e2ab8ac6570aaace783a67b4bede141eb82"
+    },
+    {
+      "role": "detail",
+      "path": "datasets/ash-synthetic-reinforced-v3/raw/reinforce-test-d0000-OK.png",
+      "sha256": "ea01c97835ba12ddfa88c881a40eb697da181987e6f5b25dd537bf52b4fd82c0"
+    },
+    {
+      "role": "detail",
+      "path": "datasets/ash-synthetic-reinforced-v3/raw/reinforce-test-d0000-NG01.png",
+      "sha256": "f5708adebc1be865e77301e3909f0db5297cc446aeed077c94882a2a8555fe87"
+    },
+    {
+      "role": "detail",
+      "path": "datasets/ash-synthetic-reinforced-v3/raw/reinforce-test-d0000-NG02.png",
+      "sha256": "e191f7a3a703ad124821f1835238ec123bb8ff2bbee7d0be27d1bb502047923d"
+    },
+    {
+      "role": "detail",
+      "path": "datasets/ash-synthetic-reinforced-v3/raw/reinforce-test-d0000-NG03.png",
+      "sha256": "1c4ae9514657f798b6e644156e974cc4df34bf5aff8d7136174365c1536f55f6"
+    },
+    {
+      "role": "detail",
+      "path": "datasets/ash-synthetic-reinforced-v3/raw/reinforce-test-d0000-NG04.png",
+      "sha256": "22eec656a0fddb6289d87986b1a630621109f735b6d9ce420bc46ed02da80000"
+    },
+    {
+      "role": "detail",
+      "path": "datasets/ash-synthetic-reinforced-v3/raw/reinforce-test-d0000-NG05.png",
+      "sha256": "73a2b0e9aeb54d9985e268c8786a6ce4a0d1cd81eaab4d2cf0c66b60e311a2a1"
+    },
+    {
+      "role": "detail",
+      "path": "datasets/ash-synthetic-reinforced-v3/raw/reinforce-test-d0000-NG06.png",
+      "sha256": "9566a2b872803fc599fa1796afe311b8e051e901a29ecff6e7ad10fc71a2dcde"
+    },
+    {
+      "role": "detail",
+      "path": "datasets/ash-synthetic-reinforced-v3/raw/reinforce-test-d0004-OK.png",
+      "sha256": "e77c8685972fc8792c50d0d82ef1b5ef177c3df30315679c5c078e13e1072c0a"
+    },
+    {
+      "role": "detail",
+      "path": "datasets/ash-synthetic-reinforced-v3/raw/reinforce-test-d0004-NG03.png",
+      "sha256": "740a02e97f450d1a734d5c8fdd8c9c041fed546a15325745c3af5814c05a1d27"
+    }
+  ]
+}

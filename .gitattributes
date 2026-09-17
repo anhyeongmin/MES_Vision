@@ -1,0 +1,32 @@
+* text=auto
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+artifacts/camera-calibration/screen-20260917-000809-3fd46a/calibration-738ac555.json -text
+artifacts/camera-calibration/video-20260914/exploratory-calibration.json -text
+models/dinov2-small/README.md -text
+models/dinov2-small/config.json -text
+models/dinov2-small/preprocessor_config.json -text
+models/manifest.json -text
+models/model-registry.json -text
+models/qwen3.5-2b-benchmark/LICENSE -text
+models/qwen3.5-2b-benchmark/README.md -text
+models/qwen3.5-2b-benchmark/chat_template.jinja -text
+models/qwen3.5-2b-benchmark/config.json -text
+models/qwen3.5-2b-benchmark/merges.txt -text
+models/qwen3.5-2b-benchmark/model.safetensors.index.json -text
+models/qwen3.5-2b-benchmark/preprocessor_config.json -text
+models/qwen3.5-2b-benchmark/tokenizer.json -text
+models/qwen3.5-2b-benchmark/tokenizer_config.json -text
+models/qwen3.5-2b-benchmark/video_preprocessor_config.json -text
+models/qwen3.5-2b-benchmark/vocab.json -text
+models/sam2.1-hiera-small/README.md -text
+models/sam2.1-hiera-small/config.json -text
+models/sam2.1-hiera-small/manifest.json -text
+models/sam2.1-hiera-small/preprocessor_config.json -text
+models/sam2.1-hiera-small/processor_config.json -text
+models/selection-lock.json -text
+models/vlm-all-classes-training-20260916-013722/README.md -text
+models/vlm-all-classes-training-20260916-013722/adapter_config.json -text
+models/vlm-benchmark-downloads.json -text
+models/vlm-region-abstain-v1/README.md -text
+models/vlm-region-abstain-v1/adapter_config.json -text

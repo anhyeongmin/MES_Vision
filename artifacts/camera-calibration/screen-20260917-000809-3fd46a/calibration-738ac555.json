@@ -1,0 +1,124 @@
+{
+  "status": "SCREEN_BOARD_CHECK_PASSED",
+  "image_size": [
+    1280,
+    720
+  ],
+  "K": [
+    [
+      1034.493672477597,
+      0.0,
+      680.9563445197506
+    ],
+    [
+      0.0,
+      1032.2227033743945,
+      350.5550497822488
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "D": [
+    [
+      -0.4927384351628961,
+      0.33067360060155304,
+      -0.0005825442913327619,
+      -0.0003065213688478072,
+      -0.15157004381679387
+    ]
+  ],
+  "pattern_inner_corners": [
+    9,
+    6
+  ],
+  "cropped_fov": {
+    "kind": "rectified_center_square_geometric_estimate",
+    "image_size": [
+      720,
+      720
+    ],
+    "crop_xyxy": [
+      280,
+      0,
+      1000,
+      720
+    ],
+    "h_degrees": 38.32319223266242,
+    "v_degrees": 38.422696642141496,
+    "d_degrees": 52.412410216286176,
+    "diagonal_degrees": [
+      52.412410216286176,
+      52.4028005047064
+    ],
+    "diagonal_definition": "maximum of two corner-to-corner angles",
+    "axes_definition": "rays through opposite edge midpoints; outer pixel edges",
+    "output_camera_matrix": [
+      [
+        1034.493672477597,
+        0.0,
+        680.9563445197506
+      ],
+      [
+        0.0,
+        1032.2227033743945,
+        350.5550497822488
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "valid_pixel_fraction": 1.0,
+    "includes_invalid_border": false,
+    "estimated": true
+  },
+  "object_units": "square=1; no metric scale",
+  "train_frames": [
+    0,
+    1,
+    3,
+    4,
+    6,
+    7,
+    9,
+    10,
+    12,
+    13,
+    15,
+    16
+  ],
+  "held_out_frames": [
+    2,
+    5,
+    8,
+    11,
+    14,
+    17
+  ],
+  "train_rms_px": 0.36139645333427645,
+  "held_out_errors_px": [
+    0.3938581645488739,
+    0.3840966522693634,
+    0.3786543607711792,
+    0.4135827422142029,
+    0.3964962959289551,
+    0.3873598277568817
+  ],
+  "tilt_span_degrees": 93.2622626622347,
+  "quality_passed": true,
+  "production_ready": false,
+  "limitations": [
+    "Same-session verification; not independent metrology",
+    "Requires flat display and physically square pixels",
+    "Manual focus must remain fixed",
+    "Robot mapping and inspection models need verification after changing image geometry"
+  ],
+  "camera_serial": "uvc:700:3c5f630386c1cd4791cc76bd76c561f432c6225acf60467230249b190e14da59",
+  "focus_note": "888",
+  "source": "screen_board",
+  "capture_manifest_sha256": "85c6dcf00c350a1873d01b687c64fec282121583bc77affa8ccf5c2c1b4e26eb"
+}

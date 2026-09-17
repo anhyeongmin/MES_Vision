@@ -1,0 +1,15 @@
+{
+  "role": "known_defect_detector",
+  "dataset_dir": "../../../datasets/ash-real-v1/detail-defects",
+  "initial_weights": "../../../artifacts/training/ash-reinforced-v3/detail-defects/inference.pth",
+  "initial_sha256": "d748f4a1736568553a17c8196f7d0f5a8b92f36ceb389fa7b779f3326c8f6b37",
+  "epochs": 30,
+  "batch_size": 2,
+  "grad_accum_steps": 4,
+  "lr": 5e-05,
+  "lr_encoder": 5e-05,
+  "num_workers": 0,
+  "seed": 42,
+  "precision": "bf16-mixed",
+  "synthetic": false
+}

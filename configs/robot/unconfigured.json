@@ -1,0 +1,18 @@
+{
+  "version": "unconfigured-magician-v1",
+  "product_id": null,
+  "kind": "real",
+  "validated": false,
+  "validation_reference": null,
+  "calibration_version": null,
+  "grasp_policy_version": null,
+  "workspace": null,
+  "pick_z_mm": null,
+  "travel_z_mm": null,
+  "destinations": null,
+  "end_effector": null,
+  "verification_method": null,
+  "frame_max_age_seconds": null,
+  "command_timeout_seconds": null,
+  "allow_review_move": false
+}

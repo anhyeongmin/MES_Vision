@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "state": "UNCONFIGURED",
+  "active_calibration": null,
+  "product_id": null,
+  "camera_id": null,
+  "mount_revision": null,
+  "robot_base_id": null,
+  "tool_frame_id": null,
+  "image_size": null,
+  "plane_z_mm": null,
+  "lens_parameters": null,
+  "acceptance_limits": null,
+  "note": "No measured D405/Dobot calibration. Workspace width and height alone cannot activate mapping."
+}

@@ -1,0 +1,15 @@
+{
+  "role": "known_defect_detector",
+  "dataset_dir": "../../datasets/known_defect_detector",
+  "initial_weights": "../../models/rf-detr-small.pth",
+  "initial_sha256": "d81979a9213a2109345158ce9232668df4c1ae52e9b8db3f2ec0a8cbad959b33",
+  "epochs": 100,
+  "batch_size": 2,
+  "grad_accum_steps": 4,
+  "lr": 0.0001,
+  "lr_encoder": 0.00015,
+  "num_workers": 0,
+  "seed": 42,
+  "precision": "bf16-mixed",
+  "synthetic": false
+}

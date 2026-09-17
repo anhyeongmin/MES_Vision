@@ -1,0 +1,15 @@
+{
+  "role": "object_detector",
+  "dataset_dir": "../../../datasets/ash-real-v1/overview-objects",
+  "initial_weights": "../../../artifacts/training/ash-synthetic-v2-first/overview-objects/inference.pth",
+  "initial_sha256": "ccf4bb1fd18e670782e8bb5c1241509e8617c9f3a9b5a56e80af5bad6861c9d3",
+  "epochs": 30,
+  "batch_size": 2,
+  "grad_accum_steps": 4,
+  "lr": 5e-05,
+  "lr_encoder": 5e-05,
+  "num_workers": 0,
+  "seed": 42,
+  "precision": "bf16-mixed",
+  "synthetic": false
+}

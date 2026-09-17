@@ -1,0 +1,17 @@
+[
+  {
+    "repo": "Qwen/Qwen3.5-0.8B",
+    "revision": "2fc06364715b967f1860aea9cf38778875588b17",
+    "path": "C:\\Users\\alexi\\Desktop\\Workspace\\MES_Vision\\models\\qwen3.5-0.8b-benchmark"
+  },
+  {
+    "repo": "Qwen/Qwen3.5-2B",
+    "revision": "15852e8c16360a2fea060d615a32b45270f8a8fc",
+    "path": "C:\\Users\\alexi\\Desktop\\Workspace\\MES_Vision\\models\\qwen3.5-2b-benchmark"
+  },
+  {
+    "repo": "Qwen/Qwen3-VL-2B-Instruct",
+    "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+    "path": "C:\\Users\\alexi\\Desktop\\Workspace\\MES_Vision\\models\\qwen3-vl-2b-instruct-benchmark"
+  }
+]

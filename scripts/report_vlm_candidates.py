@@ -1,0 +1,14 @@
+from pathlib import Path
+import json,statistics,html,csv,re
+p=Path('artifacts/vlm-candidate-comparison-v1');summaries=[];cards=[]
+for f in sorted(p.glob('Qwen*.json')):
+ data=json.loads(f.read_text(encoding='utf-8'));rows=[r for r in data['results'] if not r['warmup']];unique=[r for r in rows if r['repeat']==0];times=sorted(r['seconds'] for r in rows)
+ if not rows:continue
+ correct=lambda r:r['valid'] and not r['truncated'] and r['parsed']['code']==r['expected']
+ s=dict(model=f.stem,unique_images=len(unique),code_matches=sum(correct(r) for r in unique),normal_false=sum(r['expected']=='OK' and r['valid'] and r['parsed']['code'] not in ['OK','UNCERTAIN'] for r in unique),ng_as_ok=sum(r['expected']!='OK' and r['valid'] and r['parsed']['code']=='OK' for r in unique),mean_seconds=statistics.mean(times),p95_seconds=times[min(len(times)-1,__import__('math').ceil(.95*len(times))-1)],max_seconds=max(times),within_2s=sum(t<=2 for t in times),timed_requests=len(times),korean_responses=sum(bool(re.search('[가-힣]',r['raw'])) for r in unique),truncated=sum(r['truncated'] for r in rows),peak_mib=max(r['peak_mib'] for r in rows));summaries.append(s)
+ for r in unique:
+  cards.append('<article><h3>'+html.escape(f.stem+' / '+r['id'])+'</h3><p>'+html.escape(f"Expected {r['expected']} | {r['seconds']:.2f}s | code match={correct(r)}")+'</p><pre>'+html.escape(r['raw'])+'</pre></article>')
+(p/'summary.json').write_text(json.dumps(summaries,ensure_ascii=False,indent=2),encoding='utf-8')
+page='<meta charset="utf-8"><style>body{font-family:sans-serif;max-width:1200px;margin:30px auto}td,th{border:1px solid #ccc;padding:8px}table{border-collapse:collapse}pre{white-space:pre-wrap}article{border:1px solid #ccc;padding:12px;margin:10px}</style><h1>VLM 후보 속도·응답 비교</h1><p>RTX3090, BF16, 상세사진 448px 이내, 최대64 생성토큰, 동일한 정상구조/검사기준과 짧은 한국어 응답 지시. 모델별 예열 제외 14장×2회. 모델 로딩 제외, 입력 처리부터 전체 응답 디코딩까지 측정. 원본 라벨/DETR 예측 미제공. 정상 기준 이미지는 미제공.</p><p>코드 일치율은 14장 소표본 개발 점검이며 설명의 정확도와 같지 않습니다. 반복사진은 독립표본이 아닙니다. 파인튜닝 전 모델 비교이며 실제 프로그램 동시 GPU 부하/5070 노트북 성능은 미측정. 3.5 계열은 기존 patch projection 최적화, 3-VL은 기본 SDPA 사용.</p><img style="width:100%" src="samples.jpg"><table><tr><th>모델</th><th>코드 일치</th><th>평균</th><th>P95</th><th>2초 이내</th><th>한국어 응답</th></tr>'
+for s in summaries:page+=f"<tr><td>{s['model']}</td><td>{s['code_matches']}/{s['unique_images']}</td><td>{s['mean_seconds']:.2f}s</td><td>{s['p95_seconds']:.2f}s</td><td>{s['within_2s']}/{s['timed_requests']}</td><td>{s['korean_responses']}/{s['unique_images']}</td></tr>"
+page+='</table><h2>설명 품질 검토</h2><p>현재4B는 NG01 코드가 맞아도 누락 위치를 반대로 설명한 사례가 있습니다. 2B는 정상 사진에도 원통 누락을 반복했고, 0.8B는 모든 사진에 NG01, 3-VL은 모든 사진에 OK를 답했습니다. 0.8B와 3-VL은 한국어 지시도 따르지 않았습니다. 현재 조건에서 속도와 신뢰할 수 있는 설명을 동시에 통과한 모델은 없습니다. 단일 프롬프트의 소규모 실험이므로 다른 프롬프트·정상 기준사진·파인튜닝 적용 후 결과는 달라질 수 있습니다.</p>'+''.join(cards);(p/'report.html').write_text(page,encoding='utf-8');print(json.dumps(summaries))

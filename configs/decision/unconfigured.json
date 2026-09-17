@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "version": "unconfigured-policy-v1",
+  "product_id": null,
+  "kind": "real",
+  "validated": false,
+  "validation_reference": null,
+  "detector": null,
+  "frame_criteria_version": null,
+  "require_expected_count": true,
+  "rules": [
+    {"check_id": "known_defects", "required": true, "method": "defect_candidates", "validated": false},
+    {"check_id": "anomaly", "required": true, "method": "anomaly_distance", "validated": false},
+    {"check_id": "geometry", "required": true, "method": "status", "validated": false}
+  ]
+}

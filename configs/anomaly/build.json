@@ -1,0 +1,9 @@
+{
+  "image_size": 448,
+  "bank": {
+    "max_candidates": 16384,
+    "max_bank": 2048,
+    "projection_dim": 32,
+    "seed": 42
+  }
+}

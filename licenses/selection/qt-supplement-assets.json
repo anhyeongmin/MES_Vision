@@ -1,0 +1,56 @@
+[
+  {
+    "id": "pyside-pyside-setup/release",
+    "url": "https://api.github.com/repos/pyside/pyside-setup/commits/v6.11.2",
+    "path": "licenses/selection/pyside-pyside-setup-release.json",
+    "size": 5973,
+    "sha256": "ebf13016f581e5728d84dc9878438a9cf122b80f7f798c06ff36f3a12881f7ca",
+    "git_blob_sha1": null,
+    "category": "evidence"
+  },
+  {
+    "id": "pyside-pyside-setup/LGPL-3.0-only.txt",
+    "url": "https://raw.githubusercontent.com/pyside/pyside-setup/24627cd36e1593adf22eb1f2950e4248e7bcc1ec/LICENSES/LGPL-3.0-only.txt",
+    "path": "licenses/selection/pyside-pyside-setup-LGPL-3.0-only.txt",
+    "size": 7651,
+    "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+    "git_blob_sha1": null,
+    "category": "evidence"
+  },
+  {
+    "id": "pyside-pyside-setup/GPL-3.0-only.txt",
+    "url": "https://raw.githubusercontent.com/pyside/pyside-setup/24627cd36e1593adf22eb1f2950e4248e7bcc1ec/LICENSES/GPL-3.0-only.txt",
+    "path": "licenses/selection/pyside-pyside-setup-GPL-3.0-only.txt",
+    "size": 35147,
+    "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+    "git_blob_sha1": null,
+    "category": "evidence"
+  },
+  {
+    "id": "qt-qtbase/release",
+    "url": "https://api.github.com/repos/qt/qtbase/commits/v6.11.2",
+    "path": "licenses/selection/qt-qtbase-release.json",
+    "size": 5545,
+    "sha256": "48007f4268f43a94f2d2fa6865aafa53d773168a7f60629b55100f68dd9843cc",
+    "git_blob_sha1": null,
+    "category": "evidence"
+  },
+  {
+    "id": "qt-qtbase/LGPL-3.0-only.txt",
+    "url": "https://raw.githubusercontent.com/qt/qtbase/ef55f427f2c8b410d34f8a7681020a3000cf6866/LICENSES/LGPL-3.0-only.txt",
+    "path": "licenses/selection/qt-qtbase-LGPL-3.0-only.txt",
+    "size": 7651,
+    "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+    "git_blob_sha1": null,
+    "category": "evidence"
+  },
+  {
+    "id": "qt-qtbase/GPL-3.0-only.txt",
+    "url": "https://raw.githubusercontent.com/qt/qtbase/ef55f427f2c8b410d34f8a7681020a3000cf6866/LICENSES/GPL-3.0-only.txt",
+    "path": "licenses/selection/qt-qtbase-GPL-3.0-only.txt",
+    "size": 35147,
+    "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+    "git_blob_sha1": null,
+    "category": "evidence"
+  }
+]

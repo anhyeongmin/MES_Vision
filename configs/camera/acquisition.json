@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "processing": {
+    "kind": "undistorted_center_square_v1",
+    "sensor_size": [
+      1280,
+      720
+    ],
+    "calibration_file": "artifacts/camera-calibration/screen-20260917-000809-3fd46a/calibration-738ac555.json",
+    "calibration_sha256": "ff1c9713ab3e160efc533d3f30b335d6e638ccc84c2c6f2feae84647c885e670",
+    "camera_serial": "uvc:700:3c5f630386c1cd4791cc76bd76c561f432c6225acf60467230249b190e14da59"
+  }
+}

@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "selection_date": "2026-09-05",
+  "production_ready": false,
+  "components": [
+    {
+      "id": "planar_calibration",
+      "implementation": "mes_vision.calibration.core; normalized DLT with independent holdout validation",
+      "application_program": "scripts/calibration.py",
+      "application_runtime_report": "artifacts/calibration-check/report.json",
+      "application_documentation": "docs/CALIBRATION.md",
+      "unconfigured_template": "configs/calibration/unconfigured.json",
+      "active_calibration": null,
+      "status": "SYNTHETIC_MAPPING_UI_AND_ROBOT_BRIDGE_VERIFIED; REAL_CALIBRATION_PENDING"
+    },
+    {
+      "id": "robot_controller",
+      "implementation": "mes_vision.robot.controller.RobotController",
+      "application_program": "scripts/robot.py",
+      "application_runtime_report": "artifacts/robot-check/report.json",
+      "application_documentation": "docs/ROBOT.md",
+      "unconfigured_template": "configs/robot/unconfigured.json",
+      "active_hardware_profile": null,
+      "hardware_adapter_implemented": false,
+      "status": "SIMULATED_WORKFLOW_AND_RESTART_VERIFIED; REAL_DEVICE_CALIBRATION_AND_TRANSPORT_PENDING"
+    },
+    {
+      "id": "decision_policy",
+      "implementation": "mes_vision.decision.policy.apply_policy",
+      "application_program": "scripts/decision.py",
+      "application_runtime_report": "artifacts/decision-check/report.json",
+      "application_documentation": "docs/DECISION.md",
+      "unconfigured_template": "configs/decision/unconfigured.json",
+      "active_product_policy": null,
+      "status": "IMPLEMENTED; SYNTHETIC_RULES_REPLAY_AND_UI_VERIFIED; REAL_CRITERIA_PENDING",
+      "robot_authorization": false
+    },
+    {
+      "id": "object_detector",
+      "implementation": "rfdetr.RFDETRSmall",
+      "version": "1.9.4",
+      "initial_weights": "models/rf-detr-small.pth",
+      "initial_license": "Apache-2.0",
+      "product_weights": null,
+      "training_status": "WAITING_FOR_REAL_DATA",
+      "purpose": "product boxes in full frame",
+      "training_environment_verified": true,
+      "training_environment_report": "artifacts/development-check/training.json",
+      "application_adapter": "mes_vision.inspection.rfdetr_adapter.RFDETRDetector",
+      "application_adapter_runtime_report": "artifacts/inspection-check/gpu.json",
+      "training_program": "scripts/training.py",
+      "training_program_report": "artifacts/training-check/report.json",
+      "synthetic_training_program_verified": true
+    },
+    {
+      "id": "known_defect_detector",
+      "implementation": "rfdetr.RFDETRSmall",
+      "version": "1.9.4",
+      "initial_weights": "models/rf-detr-small.pth",
+      "initial_license": "Apache-2.0",
+      "product_weights": null,
+      "training_status": "WAITING_FOR_REAL_DATA",
+      "purpose": "multiple visible defect boxes in original-resolution product crops",
+      "companion_checks": [
+        "missing_feature_expectations",
+        "hole_count_and_shape",
+        "top_outline"
+      ],
+      "note": "Separate fine-tuned checkpoint from object_detector. Absence of detections is not an OK verdict.",
+      "training_environment_verified": true,
+      "training_environment_report": "artifacts/development-check/training.json",
+      "application_adapter": "mes_vision.inspection.rfdetr_adapter.RFDETRDefectInspector",
+      "application_adapter_status": "SYNTHETIC_TRAINED_CHECKPOINT_RELOAD_VERIFIED; real product checkpoint pending",
+      "training_program": "scripts/training.py",
+      "training_program_report": "artifacts/training-check/report.json",
+      "synthetic_training_program_verified": true
+    },
+    {
+      "id": "anomaly_detector",
+      "implementation": "mes_vision.anomaly.scoring.AnomalyInspector; local normal memory with normalized DINOv2 patch features",
+      "implementation_status": "IMPLEMENTED; SYNTHETIC_GPU_VERIFIED; REAL_REFERENCE_AND_THRESHOLDS_PENDING",
+      "application_program": "scripts/anomaly.py",
+      "application_runtime_report": "artifacts/anomaly-check/report.json",
+      "application_documentation": "docs/ANOMALY.md",
+      "reference_commit": "fcaa92f124fb1ad74a7acf56726decd4b27cbcad",
+      "feature_model": {
+        "id": "dinov2",
+        "repo_id": "facebook/dinov2-small",
+        "revision": "ed25f3a31f01632728cabb09d1542f84ab7b0056",
+        "license": "apache-2.0",
+        "local_dir": "models/dinov2-small"
+      },
+      "memory_bank": null,
+      "thresholds": null,
+      "training_status": "WAITING_FOR_NORMAL_SAMPLES",
+      "note": "Adapted method, not original PatchCore CNN configuration or published benchmark equivalence.",
+      "feature_extraction_runtime_verified": true,
+      "runtime_report": "artifacts/development-check/dinov2.json"
+    },
+    {
+      "id": "vlm",
+      "implementation": "transformers native Qwen3_5ForConditionalGeneration",
+      "model": {
+        "id": "qwen",
+        "repo_id": "Qwen/Qwen3.5-4B",
+        "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+        "license": "apache-2.0",
+        "local_dir": "models/qwen3.5-4b"
+      },
+      "runtime_candidate": "transformers==5.16.1",
+      "trust_remote_code": false,
+      "quantization": null,
+      "additional_training_required_to_start": false,
+      "runtime_verified": true,
+      "role": "explanation_and_review; cannot clear confirmed NG",
+      "execution_mode": "optional_post_inspection; default OFF; cannot mutate original decision or robot actions",
+      "application_program": "scripts/vlm.py",
+      "application_runtime_report": "artifacts/vlm-check/report.json",
+      "application_documentation": "docs/VLM.md",
+      "application_status": "IMPLEMENTED; SYNTHETIC_GPU_AND_UI_VERIFIED; REAL_EXPLANATION_ACCURACY_PENDING",
+      "pre_run_integrity_check_required": true,
+      "integrity_incident": "artifacts/asset-recovery.json",
+      "runtime_verified_on": "RTX 3090 / Windows 11 / BF16",
+      "runtime_report": "artifacts/development-check/qwen.json"
+    },
+    {
+      "id": "desktop_ui",
+      "packages": [
+        "PySide6-Essentials==6.11.2",
+        "shiboken6==6.11.2"
+      ],
+      "modules": [
+        "QtCore",
+        "QtGui",
+        "QtWidgets"
+      ],
+      "license_route": "LGPL-3.0-only",
+      "runtime_verified": true,
+      "release_obligations_complete": false,
+      "runtime_report": "artifacts/development-check/ui.json",
+      "application_program": "scripts/desktop.py",
+      "application_documentation": "docs/DESKTOP_UI.md",
+      "application_runtime_report": "artifacts/desktop-check/report.json",
+      "application_status": "UNIFIED_UI_VERIFIED; COLD_SINGLE_FILE_GPU_PATH_VERIFIED; CONTINUOUS_SPEED_INSTALLER_AND_HARDWARE_PENDING",
+      "launcher": "MES Vision.cmd"
+    },
+    {
+      "id": "packaging",
+      "package": "pyinstaller==6.22.2",
+      "mode": "onedir",
+      "license": "GPL-2.0-or-later WITH Bootloader Exception; see COPYING.txt",
+      "runtime_verified": false
+    }
+  ],
+  "runtime_lock_status": "requirements-lock.txt updated; 78 installed distributions inventoried; local GPU inference, synthetic training and native UI verified",
+  "hardware_status": "WAITING_FOR_USER",
+  "runtime_verified_at_utc": "2026-09-05T17:14:27.654668+09:00"
+}

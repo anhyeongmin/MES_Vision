@@ -1,0 +1,119 @@
+{
+  "status": "EXPLORATORY_NOT_APPROVED",
+  "source": "C:/Users/alexi/OneDrive/\uc0ac\uc9c4/\uce74\uba54\ub77c \uc568\ubc94/WIN_20260914_01_09_44_Pro.mp4",
+  "image_size": [
+    1280,
+    720
+  ],
+  "pattern_inner_corners": [
+    9,
+    6
+  ],
+  "object_units": "square=1, unknown physical size",
+  "train_frames": [
+    15,
+    30,
+    45,
+    60,
+    75,
+    90,
+    105,
+    120,
+    135,
+    150,
+    165,
+    180,
+    195,
+    210,
+    225,
+    360,
+    375,
+    390,
+    405,
+    420,
+    435,
+    450,
+    465,
+    480,
+    495,
+    510,
+    525,
+    540,
+    555,
+    570,
+    585
+  ],
+  "held_out_frames": [
+    690,
+    705,
+    720,
+    735,
+    750,
+    765,
+    780
+  ],
+  "train_rms_px": 0.6299778519957451,
+  "K": [
+    [
+      1248.5533654988933,
+      0.0,
+      680.6491968485705
+    ],
+    [
+      0.0,
+      1247.700544585863,
+      359.51102527771286
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "D": [
+    [
+      -0.7010057457634431,
+      0.6127257393420363,
+      -0.0054572140537604025,
+      0.00044710582593188744,
+      -0.294560061491446
+    ]
+  ],
+  "limitations": [
+    "Same video temporal holdout, not independent capture",
+    "Unknown monitor planarity/pixel aspect and camera focus stability",
+    "No robot-mm validation; no production registration"
+  ],
+  "held_out_pose_fit_errors": [
+    {
+      "frame": 690,
+      "rmse_px": 1.5702602828640033
+    },
+    {
+      "frame": 705,
+      "rmse_px": 0.7236427136865566
+    },
+    {
+      "frame": 720,
+      "rmse_px": 0.2937142397650514
+    },
+    {
+      "frame": 735,
+      "rmse_px": 0.6788366979181395
+    },
+    {
+      "frame": 750,
+      "rmse_px": 0.8211655514117526
+    },
+    {
+      "frame": 765,
+      "rmse_px": 0.289798886041024
+    },
+    {
+      "frame": 780,
+      "rmse_px": 0.24308620066412143
+    }
+  ],
+  "validation_method": "Fixed K,D, held-out pose-only solvePnP followed by nonlinear pixel reprojection refinement. Explicit Nx2 shape normalization.",
+  "validation_implementation_note": "Earlier errors were invalid due to broadcasting projectPoints Nx2 against corner Nx1x2 arrays; not camera error."
+}

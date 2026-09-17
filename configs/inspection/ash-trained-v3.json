@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "purpose": "saved_photo_inspection",
+  "product_id": "ASH",
+  "production_ready": false,
+  "training_origin": "synthetic CAD photographs",
+  "models": {
+    "overview": {
+      "backend": "rfdetr-small",
+      "weights": "artifacts/training/ash-synthetic-v2-first/overview-objects/inference.pth",
+      "sha256": "ccf4bb1fd18e670782e8bb5c1241509e8617c9f3a9b5a56e80af5bad6861c9d3",
+      "class_names": [
+        "ASH"
+      ],
+      "threshold": 0.05,
+      "inference_profile": "standard",
+      "max_batch_size": 1,
+      "device": "cuda"
+    },
+    "objects": {
+      "backend": "rfdetr-small",
+      "weights": "artifacts/training/ash-synthetic-v2-first/detail-objects/inference.pth",
+      "sha256": "940aa6e56c05e831425f5154d226775fdd3d33fbd530f193d95664a70b4a4c88",
+      "class_names": [
+        "ASH"
+      ],
+      "threshold": 0.2,
+      "inference_profile": "standard",
+      "max_batch_size": 1,
+      "device": "cuda"
+    },
+    "defects": {
+      "backend": "rfdetr-small",
+      "weights": "artifacts/training/ash-reinforced-v3/detail-defects/inference.pth",
+      "sha256": "d748f4a1736568553a17c8196f7d0f5a8b92f36ceb389fa7b779f3326c8f6b37",
+      "class_names": [
+        "NG01",
+        "NG02",
+        "NG03",
+        "NG04",
+        "NG05",
+        "NG06"
+      ],
+      "threshold": 0.1,
+      "inference_profile": "standard",
+      "max_batch_size": 1,
+      "device": "cuda",
+      "class_codes": {
+        "0": "NG01",
+        "1": "NG02",
+        "2": "NG03",
+        "3": "NG04",
+        "4": "NG05",
+        "5": "NG06"
+      }
+    }
+  },
+  "threshold_scope": "Candidate display only; validation-selected thresholds, not approved OK/NG criteria",
+  "threshold_sources": {
+    "artifacts\\training\\ash-synthetic-v2-first\\review\\summary.json": "5e0fb065a9df91f62da8be1a6a444d9d02e8315ff163ee0dd70da2aa684a1753",
+    "artifacts\\training\\ash-reinforced-v3\\review\\thresholds.json": "705963bab9fcd33c8078f0ac94ae2df39fd6923e480bd5bdef8f62e1eff71867"
+  }
+}
